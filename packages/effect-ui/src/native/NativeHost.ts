@@ -240,6 +240,19 @@ export function makeHost(options?: MakeNativeHostOptions | undefined): Renderer.
         DockLayout.setDock(node, value as 'left' | 'top' | 'right' | 'bottom');
         return;
       }
+      if (name === '__onNativeAction') {
+        const prev = target['__nsNativeActionCb'] as ((ev?: unknown) => void) | undefined;
+        if (prev && typeof node.off === 'function') node.off('tap', prev);
+        if (typeof value === 'function') {
+          const fn = value as () => void;
+          const cb = () => fn();
+          target['__nsNativeActionCb'] = cb;
+          if (typeof node.on === 'function') node.on('tap', cb);
+        } else {
+          target['__nsNativeActionCb'] = undefined;
+        }
+        return;
+      }
       if (controlledProps.has(name)) {
         if (target[name] === value) return;
         suppressing = true;

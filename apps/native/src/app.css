@@ -11,18 +11,21 @@
 /* NativeScript stamps .ns-dark on the root view instead of the web's .dark. */
 @custom-variant dark (&:is(.ns-dark *));
 
+Frame,
 Page {
   background-color: var(--background);
   color: var(--foreground);
 }
 
 ActionBar {
-  background-color: var(--card);
+  background-color: var(--background);
   color: var(--foreground);
+  border-bottom-width: 0;
+  android-elevation: 0;
 }
 
 TabView {
-  tab-background-color: var(--card);
+  tab-background-color: var(--background);
   selected-tab-text-color: var(--foreground);
   tab-text-color: var(--muted-foreground);
   android-selected-tab-highlight-color: var(--brand);
@@ -86,4 +89,40 @@ button {
   font-weight: 600;
   padding: 12 16;
   margin-top: 8;
+}
+
+.native-lab-chip {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border-radius: 10;
+  font-size: 13;
+  font-weight: 700;
+  padding: 8 6;
+  margin: 0 3;
+}
+
+.native-lab-vrow {
+  background-color: var(--background);
+  border-radius: 10;
+  border-width: 1;
+  border-color: var(--border);
+  padding: 10 12;
+  margin-bottom: 6;
+}
+
+.native-lab-input {
+  background-color: var(--background);
+  color: var(--foreground);
+  placeholder-color: var(--muted-foreground);
+  border-radius: 10;
+  border-width: 1;
+  border-color: var(--border);
+  font-size: 14;
+  padding: 10 12;
+  margin-bottom: 4;
+}
+
+.native-sheet-surface {
+  background-color: var(--card);
+  border-radius: 24;
 }

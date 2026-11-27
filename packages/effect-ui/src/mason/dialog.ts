@@ -9,8 +9,14 @@
  */
 import { Application, Frame, type View as NSView } from '@nativescript/core';
 import { Div } from '@triniwiz/nativescript-masonkit';
+import {
+  configureAndroidSheetWindow,
+  configureIOSSheetController,
+  parseSheetOptionsFromAttributes,
+} from '../sheet/index.ts';
 
 const IOS_OVER_FULL_SCREEN = 5;
+const IOS_PAGE_SHEET = 1;
 
 export interface DialogPresenter {
   readonly sync: (
@@ -121,19 +127,31 @@ export function createDialogPresenter(): DialogPresenter {
       const presenter = findPresenter(stack);
       if (!presenter || typeof presenter.showModal !== 'function') return;
 
-      // Build a transparent full-screen MasonKit backdrop wrapper that centers
-      // the <dialog> card and routes taps outside the card to `cancel`.
+      const dialogAttrs = dialog as unknown as Record<string, string | undefined>;
+      const isSheet = dialogAttrs['data-presentation'] === 'sheet';
+      const sheetOpts = isSheet ? parseSheetOptionsFromAttributes(dialogAttrs) : undefined;
+
+      // Build a MasonKit modal wrapper. Standard `<dialog>` renders centered over a
+      // scrim; `<dialog data-presentation="sheet">` uses native iOS
+      // UISheetPresentationController (with Liquid Glass on iOS 26+) / Android bottom sheet.
       const root = new Div() as unknown as NSView;
-      root.className = `${currentThemeClass()} ns-effect-dialog-host`;
+      root.className = `${currentThemeClass()} ${isSheet ? 'ns-effect-sheet-host' : 'ns-effect-dialog-host'}`;
       const rootStyle = root.style as unknown as Record<string, unknown>;
       rootStyle['display'] = 'flex';
       rootStyle['flexDirection'] = 'column';
-      rootStyle['alignItems'] = 'center';
-      rootStyle['justifyContent'] = 'center';
       rootStyle['width'] = '100%';
       rootStyle['height'] = '100%';
-      rootStyle['padding'] = 20;
-      rootStyle['backgroundColor'] = 'rgba(0, 0, 0, 0.52)';
+      if (isSheet) {
+        rootStyle['alignItems'] = 'stretch';
+        rootStyle['justifyContent'] = 'flex-start';
+        rootStyle['padding'] = 16;
+        rootStyle['backgroundColor'] = 'transparent';
+      } else {
+        rootStyle['alignItems'] = 'center';
+        rootStyle['justifyContent'] = 'center';
+        rootStyle['padding'] = 20;
+        rootStyle['backgroundColor'] = 'rgba(0, 0, 0, 0.52)';
+      }
 
       // Consume taps on the dialog card itself so they don't bubble to the backdrop.
       dialog.on('click', (event) => {
@@ -143,9 +161,11 @@ export function createDialogPresenter(): DialogPresenter {
         }
       });
 
-      root.on('click', () => {
-        onCancel();
-      });
+      if (!isSheet) {
+        root.on('click', () => {
+          onCancel();
+        });
+      }
 
       root.on('activityBackPressed', (args) => {
         (args as unknown as { cancel?: boolean }).cancel = true;
@@ -158,8 +178,19 @@ export function createDialogPresenter(): DialogPresenter {
       active.set(dialog, entry);
       stack.push(entry);
 
-      root.on('showingModally', () => clearModalWindowBackground(root));
-      root.on('shownModally', () => clearModalWindowBackground(root));
+      const applyPresentation = () => {
+        if (isSheet) {
+          setTimeout(() => {
+            configureIOSSheetController(root, sheetOpts);
+            configureAndroidSheetWindow(root, sheetOpts);
+          }, 0);
+        } else {
+          clearModalWindowBackground(root);
+        }
+      };
+
+      root.on('showingModally', applyPresentation);
+      root.on('shownModally', applyPresentation);
 
       presenter.showModal(root, {
         context: null,
@@ -176,10 +207,10 @@ export function createDialogPresenter(): DialogPresenter {
             onClose();
           }
         },
-        fullscreen: true,
+        fullscreen: !isSheet,
         animated: true,
-        cancelable: false,
-        ios: { presentationStyle: IOS_OVER_FULL_SCREEN },
+        cancelable: isSheet ? sheetOpts?.dismissable !== false : false,
+        ios: { presentationStyle: isSheet ? IOS_PAGE_SHEET : IOS_OVER_FULL_SCREEN },
       });
     },
 
