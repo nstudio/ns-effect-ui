@@ -315,4 +315,128 @@ describe('MasonHost (HTML-compatible NativeScript host)', () => {
       ),
     );
   });
+
+  it('keeps @effect/ui-kit Switch hidden input out of nativeChildren while still submitting its form value', async () => {
+    const Msg = UiSchema.TaggedEnum({
+      ToggledHaptics: { checked: Schema.Boolean },
+      Submitted: {},
+    });
+
+    const submissions: Array<Record<string, string>> = [];
+
+    const SettingsForm = Html.component({
+      name: 'SettingsForm',
+      model: Schema.Struct({ enabled: Schema.Boolean }),
+      message: Msg,
+    }).make({
+      init: () => ({ enabled: true }),
+      update: {
+        ToggledHaptics: ($, { checked }) => $.evolve({ enabled: checked }),
+        Submitted: ($) => $.model,
+      },
+      view: (h, model) =>
+        h.form
+          .on('submit', ({ fields }) => {
+            submissions.push({ ...fields });
+            return Msg.Submitted();
+          })
+          .children(
+            Switch(h, {
+              props: { checked: model.enabled, name: 'haptics' },
+              onToggle: ({ checked }) => Msg.ToggledHaptics({ checked }),
+              view: (parts) =>
+                parts
+                  .root(h.button.id('haptics-switch').class('switch'))
+                  .children(parts.thumb(h.span.id('haptics-thumb').class('thumb'))),
+            }),
+            h.button.id('submit-btn').attr('type', 'submit').children('Save'),
+          ),
+    });
+
+    const rootContainer = createMockMasonView('scroll');
+
+    await Effect.runPromise(
+      Effect.scoped(
+        Effect.gen(function* () {
+          const mounted = yield* MasonHost.mountEffect(
+            SettingsForm,
+            {},
+            rootContainer as unknown as NSView,
+            {
+              host: {
+                createElement: (tag) => createMockMasonView(tag) as unknown as NSView,
+              },
+            },
+          );
+
+          const sw = findViews(rootContainer, (v) => v.id === 'haptics-switch')[0]!;
+          const thumb = findViews(rootContainer, (v) => v.id === 'haptics-thumb')[0]!;
+          const submitBtn = findViews(rootContainer, (v) => v.id === 'submit-btn')[0]!;
+
+          expect(sw.nativeChildren).toEqual([thumb]);
+          expect(findViews(rootContainer, (v) => v.tag === 'input')).toEqual([]);
+
+          submitBtn.emit('click');
+          yield* Effect.promise(flushMicrotasks);
+          expect(submissions).toEqual([{ haptics: 'on' }]);
+
+          sw.emit('click');
+          yield* Effect.promise(flushMicrotasks);
+          expect(mounted.model()).toEqual({ enabled: false });
+          expect(sw.nativeChildren).toEqual([thumb]);
+
+          submitBtn.emit('click');
+          yield* Effect.promise(flushMicrotasks);
+          expect(submissions).toEqual([{ haptics: 'on' }, {}]);
+
+          sw.emit('click');
+          yield* Effect.promise(flushMicrotasks);
+          expect(mounted.model()).toEqual({ enabled: true });
+          expect(sw.nativeChildren).toEqual([thumb]);
+
+          submitBtn.emit('click');
+          yield* Effect.promise(flushMicrotasks);
+          expect(submissions).toEqual([{ haptics: 'on' }, {}, { haptics: 'on' }]);
+        }),
+      ),
+    );
+  });
+
+  it('detaches and re-attaches <input> in exact sibling order when type transitions to/from hidden', () => {
+    const host = MasonHost.makeHost({
+      createElement: (tag) => createMockMasonView(tag) as unknown as NSView,
+    });
+
+    const parent = createMockMasonView('div');
+    const parentNode = parent as unknown as NSView;
+    const before = host.createElement('span');
+    const input = host.createElement('input');
+    const after = host.createElement('span');
+
+    host.insertBefore(parentNode, before, undefined);
+    host.insertBefore(parentNode, input, undefined);
+    host.insertBefore(parentNode, after, undefined);
+
+    expect(parent.nativeChildren).toEqual([before, input, after]);
+    expect(host.parentOf(input)).toBe(parentNode);
+    expect(host.nextOf(before)).toBe(input);
+    expect(host.nextOf(input)).toBe(after);
+
+    host.setAttr(input, 'type', 'hidden', 'text');
+    expect(parent.nativeChildren).toEqual([before, after]);
+    expect(host.parentOf(input)).toBe(parentNode);
+    expect(host.nextOf(before)).toBe(input);
+    expect(host.nextOf(input)).toBe(after);
+
+    host.setAttr(input, 'type', 'text', 'hidden');
+    expect(parent.nativeChildren).toEqual([before, input, after]);
+
+    host.setAttr(input, 'type', 'HIDDEN', 'text');
+    expect(parent.nativeChildren).toEqual([before, after]);
+
+    host.setAttr(input, 'type', undefined, 'HIDDEN');
+    expect(parent.nativeChildren).toEqual([before, input, after]);
+
+    host.dispose();
+  });
 });
