@@ -1,0 +1,69 @@
+/*
+ * Shared design tokens for Web (`BrowserHost`) and NativeScript (`MasonHost`).
+ * Uses plain hex values so NativeScript CSS & MasonKit parse every token natively.
+ * Web toggles `.dark`; NativeScript stamps `.ns-light` / `.ns-dark` on the root view.
+ */
+:root,
+.ns-light {
+  --background: #f4efe6;
+  --foreground: #122625;
+  --card: #fbf8f2;
+  --card-foreground: #122625;
+  --primary: #1f6b60;
+  --primary-foreground: #f8f5ef;
+  --secondary: #e7decb;
+  --secondary-foreground: #122625;
+  --muted: #ebe3d3;
+  --muted-foreground: #4c6460;
+  --accent: #d4e8e3;
+  --accent-foreground: #122625;
+  --destructive: #c0432d;
+  --destructive-foreground: #ffffff;
+  --success: #247a4e;
+  --warning: #b87616;
+  --border: #d8ccb5;
+  --input: #c6b89e;
+}
+
+.dark,
+.ns-dark {
+  --background: #131817;
+  --foreground: #f1ece2;
+  --card: #1b2220;
+  --card-foreground: #f1ece2;
+  --primary: #52a898;
+  --primary-foreground: #0d1917;
+  --secondary: #26302d;
+  --secondary-foreground: #f1ece2;
+  --muted: #222b28;
+  --muted-foreground: #a5b4af;
+  --accent: #213c37;
+  --accent-foreground: #f1ece2;
+  --destructive: #e0725c;
+  --destructive-foreground: #1a0b08;
+  --success: #4cc284;
+  --warning: #e0a640;
+  --border: #313d39;
+  --input: #475751;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+}

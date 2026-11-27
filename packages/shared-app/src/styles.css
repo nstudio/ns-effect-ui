@@ -1,0 +1,100 @@
+/*
+ * Shared semantic styles for Web (`BrowserHost`) and NativeScript (`MasonHost`).
+ * Lengths come from Tailwind utilities in the component views; this file holds
+ * unit-free colors, flex alignment states, and attribute-selector variants.
+ */
+
+.ep-hero-banner {
+  background: linear-gradient(135deg, #1b5c52, #2e8477);
+  color: #f8f5ef;
+}
+
+.dark .ep-hero-banner,
+.ns-dark .ep-hero-banner {
+  background: linear-gradient(135deg, #1a4741, #27685e);
+  color: #f4efe6;
+}
+
+.ep-hero-subtitle {
+  color: rgba(248, 245, 239, 0.85);
+}
+
+.ep-hero-pill {
+  background-color: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.ep-filter-btn {
+  background-color: var(--secondary);
+  color: var(--muted-foreground);
+}
+
+.ep-filter-btn[data-active="true"] {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.ep-priority-high {
+  background-color: rgba(192, 67, 45, 0.14);
+  color: var(--destructive);
+}
+
+.ep-priority-normal {
+  background-color: rgba(31, 107, 96, 0.14);
+  color: var(--primary);
+}
+
+.ep-priority-low {
+  background-color: var(--secondary);
+  color: var(--muted-foreground);
+}
+
+.ep-check-circle {
+  border-color: var(--input);
+  background-color: transparent;
+}
+
+.ep-check-circle[data-done="true"] {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.ep-task-title[data-done="true"] {
+  color: var(--muted-foreground);
+  text-decoration: line-through;
+}
+
+/* @effect/ui-kit Switch — flex-based thumb placement works identically on Web and MasonKit */
+.ep-switch-track {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: var(--input);
+}
+
+.ep-switch-track[data-checked] {
+  justify-content: flex-end;
+  background-color: var(--primary);
+}
+
+.ep-switch-thumb {
+  background-color: #ffffff;
+}
+
+.ep-priority-pick {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border-color: var(--border);
+}
+
+.ep-priority-pick[data-selected="true"] {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.ep-dot-live {
+  background-color: var(--success);
+}

@@ -1,0 +1,37 @@
+{
+  "name": "ns-effect-ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "Host-agnostic Effect UI on NativeScript & MasonKit — one Effect UI application across Web, iOS, and Android",
+  "packageManager": "pnpm@10.33.4",
+  "scripts": {
+    "check": "pnpm --filter @nativescript/effect-ui check && pnpm --filter @ns-effect-ui/shared check && pnpm --filter @ns-effect-ui/web check && pnpm --filter @ns-effect-ui/native check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev:web": "pnpm --filter @ns-effect-ui/web dev",
+    "build:web": "pnpm --filter @ns-effect-ui/web build",
+    "preview:web": "pnpm --filter @ns-effect-ui/web preview",
+    "ios": "pnpm --filter @ns-effect-ui/native ios",
+    "android": "pnpm --filter @ns-effect-ui/native android"
+  },
+  "dependencies": {
+    "@effect/ui": "https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2",
+    "@effect/ui-kit": "https://pkg.pr.new/Effect-TS/ui/@effect/ui-kit@5cb34b2",
+    "effect": "^4.1.6"
+  },
+  "devDependencies": {
+    "@effect/vitest": "^4.1.6",
+    "@types/node": "^24.0.0",
+    "happy-dom": "^21.0.4",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.8"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "esbuild"
+    ]
+  }
+}

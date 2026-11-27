@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+apps/native/platforms/
+apps/native/hooks/
+apps/native/.ns-vite-build/
+apps/native/node_modules/
+.vite/
+coverage/

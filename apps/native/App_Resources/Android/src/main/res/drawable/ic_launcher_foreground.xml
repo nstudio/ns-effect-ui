@@ -1,0 +1,15 @@
+<!-- The Tideline mark (docs/brand/tideline-logo.svg), scaled into the adaptive icon's 66dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group android:scaleX="0.0543" android:scaleY="0.0543" android:translateX="17.65" android:translateY="17.7">
+        <path android:fillColor="#27695F" android:pathData="M553,153L182,325L216,877Z M787,153L1157,325L1122,877Z M669,429L802,751L537,751Z"/>
+        <group>
+            <clip-path android:pathData="M466,915Q567,875 669,915T873,915L923,1040L669,1184L415,1040Z"/>
+            <path android:fillColor="#1B4A44" android:pathData="M100,800L100,992L380,992Q550,947 669,992T960,992L1240,992L1240,800Z"/>
+            <path android:fillColor="#1B4A44" android:pathData="M100,1008L380,1008Q550,963 669,1008T960,1008L1240,1008L1240,1250L100,1250Z"/>
+        </group>
+    </group>
+</vector>

@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+@import '../../../packages/shared-app/src/tokens.css';
+@import '../../../packages/shared-app/src/styles.css';
+
+@source '../../../packages/shared-app/src';
+@source '.';
+
+@layer base {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  dialog {
+    margin: auto;
+    border: none;
+  }
+
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.52);
+    backdrop-filter: blur(4px);
+  }
+}

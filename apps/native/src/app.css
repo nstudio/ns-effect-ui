@@ -1,0 +1,89 @@
+/* MasonKit provides View.preflight = true natively; skip Tailwind's browser preflight
+   (which emits CSS-wide `font-size: inherit` that breaks NativeScript's numeric font parser). */
+@import 'tailwindcss/theme.css';
+@import 'tailwindcss/utilities.css';
+@import '../../../packages/shared-app/src/tokens.css';
+@import '../../../packages/shared-app/src/styles.css';
+
+@source '../../../packages/shared-app/src';
+@source '.';
+
+/* NativeScript stamps .ns-dark on the root view instead of the web's .dark. */
+@custom-variant dark (&:is(.ns-dark *));
+
+Page {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+ActionBar {
+  background-color: var(--card);
+  color: var(--foreground);
+}
+
+TabView {
+  tab-background-color: var(--card);
+  selected-tab-text-color: var(--primary);
+  tab-text-color: var(--muted-foreground);
+  android-selected-tab-highlight-color: var(--primary);
+}
+
+Scroll {
+  height: 100%;
+  width: 100%;
+}
+
+/* Native button alignment matching browser defaults for MasonKit block buttons */
+button {
+  text-align: center;
+}
+
+/* NativeScript core Switch / Slider / Progress tinting for Strategy A tab */
+.native-lab-card {
+  background-color: var(--card);
+  border-radius: 16;
+  border-width: 1;
+  border-color: var(--border);
+  padding: 16;
+  margin-bottom: 14;
+}
+
+.native-lab-title {
+  font-size: 20;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 4;
+}
+
+.native-lab-subtitle {
+  font-size: 13;
+  color: var(--muted-foreground);
+  margin-bottom: 12;
+}
+
+.native-lab-value {
+  font-size: 32;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 12;
+}
+
+.native-lab-btn {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 12;
+  font-size: 15;
+  font-weight: 600;
+  padding: 12 16;
+  margin-top: 8;
+}
+
+.native-lab-btn-secondary {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border-radius: 12;
+  font-size: 15;
+  font-weight: 600;
+  padding: 12 16;
+  margin-top: 8;
+}
