@@ -274,8 +274,8 @@ function makeAttributedText(text: string, style: ComputedBoxStyle): any {
   }
   if (style.textAlign !== 'left') {
     const para = g('NSMutableParagraphStyle').new();
-    // NSTextAlignment: Left=0, Right=1, Center=2
-    para.alignment = style.textAlign === 'center' ? 2 : 1;
+    // macOS 64-bit NSTextAlignment: Left=0, Center=1, Right=2
+    para.alignment = style.textAlign === 'center' ? 1 : 2;
     attrs['NSParagraphStyle'] = para;
   }
   return g('NSAttributedString').alloc().initWithStringAttributes(text, attrs);
@@ -632,11 +632,17 @@ export function makeMacosHost(options: {
       const innerW = Math.max(0, rect.width - style.padLeft - style.padRight);
       const innerH = Math.max(0, rect.height - style.padTop - style.padBottom);
       const measured = measureAppKitText(text, style, innerW);
+      const isCentered = style.textAlign === 'center';
+      const isSingleLine = isCentered && measured.height <= style.fontSize * 1.75;
+      lbl.usesSingleLineMode = isSingleLine;
       const textY =
         style.padTop + Math.max(0, (innerH - measured.height) / 2);
       lbl.frame = {
-        origin: { x: style.padLeft, y: textY },
-        size: { width: innerW, height: Math.max(innerH, measured.height) },
+        origin: { x: isCentered ? 0 : style.padLeft, y: textY },
+        size: {
+          width: isCentered ? rect.width : innerW,
+          height: Math.max(innerH, measured.height),
+        },
       };
       lbl.attributedStringValue = makeAttributedText(text, style);
     } else if (node.nsLabel) {

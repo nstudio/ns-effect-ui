@@ -192,7 +192,10 @@ export function resolveMacosStyle(
     else if (cls === 'items-start') style.alignItems = 'flex-start';
     else if (cls === 'items-end') style.alignItems = 'flex-end';
     else if (cls === 'justify-between') style.justifyContent = 'space-between';
-    else if (cls === 'justify-center') style.justifyContent = 'center';
+    else if (cls === 'justify-center') {
+      style.justifyContent = 'center';
+      style.textAlign = 'center';
+    }
     else if (cls === 'justify-end') style.justifyContent = 'flex-end';
     else if (cls === 'flex-1') style.flexGrow = 1;
     else if (cls === 'w-full') style.fullWidth = true;
@@ -297,6 +300,7 @@ export function resolveMacosStyle(
       style.backgroundColor = pal.secondary;
       style.color = pal.mutedForeground;
     } else if (cls === 'ep-check-circle') {
+      style.textAlign = 'center';
       if (attrs['data-done'] === 'true') {
         style.backgroundColor = pal.primary;
         style.borderColor = pal.primary;
