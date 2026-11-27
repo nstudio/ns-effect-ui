@@ -248,7 +248,7 @@ export const PulseApp = Html.component({
               h.span.class('text-xs font-medium text-muted-foreground').children('Done'),
               h.p
                 .id('stat-done')
-                .class('text-2xl font-bold text-primary')
+                .class('text-2xl font-bold text-brand')
                 .children(String(completed)),
             ),
           h.div

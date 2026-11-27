@@ -26,9 +26,9 @@ ActionBar {
 
 TabView {
   tab-background-color: var(--background);
-  selected-tab-text-color: var(--primary);
+  selected-tab-text-color: var(--foreground);
   tab-text-color: var(--muted-foreground);
-  android-selected-tab-highlight-color: var(--primary);
+  android-selected-tab-highlight-color: var(--brand);
 }
 
 Scroll {
@@ -67,7 +67,7 @@ button {
 .native-lab-value {
   font-size: 32;
   font-weight: 700;
-  color: var(--primary);
+  color: var(--brand);
   margin-bottom: 12;
 }
 

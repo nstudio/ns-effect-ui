@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ns_primary">#171a18</color>
-    <color name="ns_primaryDark">#0f1210</color>
-    <color name="ns_accent">#5ea396</color>
-    <color name="ns_background">#171a18</color>
-    <color name="ns_brand_primary">#5ea396</color>
-    <color name="ns_secondary_container">#27403b</color>
-    <color name="ns_surface_container">#1f2320</color>
-    <color name="ns_foreground">#f2ebdd</color>
-    <color name="ns_muted_foreground">#b5ab97</color>
-    <color name="tideline_primary">#5ea396</color>
-    <color name="tideline_deep">#3a7d71</color>
+    <color name="ns_primary">#18181B</color>
+    <color name="ns_primaryDark">#09090B</color>
+    <color name="ns_accent">#00D492</color>
+    <color name="ns_background">#09090B</color>
+    <color name="ns_brand_primary">#00D492</color>
+    <color name="ns_secondary_container">#27272A</color>
+    <color name="ns_surface_container">#18181B</color>
+    <color name="ns_foreground">#FAFAFA</color>
+    <color name="ns_muted_foreground">#9F9FA9</color>
+    <color name="splash_mark_top">#FAFAFA</color>
+    <color name="splash_mark_mid">#00D492</color>
+    <color name="splash_mark_bottom">#65ADF1</color>
 </resources>
