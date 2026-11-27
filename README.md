@@ -21,6 +21,13 @@ This repository brings Effect UI to native platforms through three layers in [`p
    - `NativePlatformLayer` — direct iOS (`UIImpactFeedbackGenerator`, `UIPasteboard`, etc.) & Android (`VibrationEffect`, `ClipboardManager`, etc.) SDK calls with zero native wrapper plugins.
    - `WebPlatformLayer` — browser equivalents (`navigator.vibrate`, `navigator.clipboard`, `matchMedia`).
    - `makeTestPlatformLayer` — deterministic in-memory recordings for Node Vitest suites.
+4. **Pure-TypeScript Native Capability Subpaths (zero Swift/Kotlin/C++ bridge plugins)**
+   - **`@nativescript/effect-ui/motion`** — UI-thread native animations via iOS CoreAnimation (`UIView.animateWithDurationDelayUsingSpringWithDamping...`) and Android `ViewPropertyAnimator` RenderThread springs (`NativeMotion.track` Mount + `NativeMotion.animateTo` ref Command) — keeps running at 60/120fps even when JS is stalled, with zero Reanimated/worklets.
+   - **`@nativescript/effect-ui/sheet`** — Native OS bottom sheets (`UISheetPresentationController` medium/large detents, grabber, and iOS 26+ Liquid Glass passthrough on iOS; bottom-docked Material sheet on Android) via `<dialog data-presentation="sheet">` or `NativeSheet.presentNativeSheet(...)` / `OpenSheet` Command.
+   - **`@nativescript/effect-ui/list`** — Host-agnostic slot-recycled `VirtualList` windowing engine (`init`, `scrolled`, `measureHeight`, `computeWindow`) rendering 1,000+ rows with a tiny constant pool of recycled native views and zero re-renders on unchanged windows.
+   - **`@nativescript/effect-ui/keyboard`** — Direct native IME `Subscription` (`NSNotificationCenter` keyboard frame notifications on iOS; `WindowInsetsCompat.Type.ime()` on Android), `DismissKeyboard` Command, and `dockedComposerStyle` helper.
+   - **`@nativescript/effect-ui/crash`** — Drop-in `makeHtmlCrashFallback` & `makeNativeCrashFallback` recovery boundaries with Effect `Cause` formatting, one-tap native clipboard copy, and instant restart.
+   - **`@nativescript/effect-ui/devtools`** — `NativeDevTools.makeBridge` wrapping `@effect/ui`'s `MessageLog.makeEncoded` to buffer and stream Wire frames (`Hello` + `WireEntry`) over WebSocket to `@effect/ui-devtools` (auto-resolving `127.0.0.1` on iOS Simulator and `10.0.2.2` on Android Emulator).
 
 ---
 
@@ -138,25 +145,26 @@ Because **both NativeScript and MasonKit target far more than iOS and Android** 
 | **Native OS API Access** | **100% direct from TypeScript** with generated native `.d.ts` typings (`UIImpactFeedbackGenerator`, `VibrationEffect`, `CoreLocation`, `SceneKit`, etc.). Zero native wrapper plugins or bridge serialization. | **Requires Expo / RN native modules** (`expo-haptics`, `expo-clipboard`, `expo-audio`, etc.). Custom native views require authoring Swift + Kotlin Expo Modules, podspec/gradle files, and manual prop/event bindings + full native rebuilds. |
 | **Bundler & JS Engine** | **Vite (`@nativescript/vite`) + V8** (fast standard Vite pipeline, ESM/HMR, full V8 runtime). | **Metro + Hermes** (requires Metro config workarounds for `#dev` / `production` conditions; no JIT on Hermes). |
 | **Platform Reach** | **Web + iOS + Android + macOS + Windows + Linux + visionOS** (NativeScript & MasonKit ship mobile and desktop backends). | **iOS + Android only** (mobile React Native / Expo). |
-| **Live Verification Today** | Verified running live on **Web**, **iOS 27 Simulator**, and **Android 16 Emulator**, plus Node Vitest `Play` tests. | Extensive simulated-phone suite (284 `NativeTest` tests); README notes `eui-playground` has not yet been run on a phone or on Android. |
+| **UI-Thread Motion** | **Native CoreAnimation (iOS) + RenderThread `ViewPropertyAnimator` (Android)** directly from pure TS (`@nativescript/effect-ui/motion`) — zero Reanimated/worklets. | **`Motion.animate`** via `react-native-worklets` + `react-native-reanimated` (requires native rebuild / dev build). |
+| **Bottom Sheets, Lists, Keyboard, Crash & DevTools** | **All shipped in pure TS with zero native plugins:** `@nativescript/effect-ui/sheet` (`UISheetPresentationController` + Liquid Glass), `/list` (1,000-row recycled `VirtualList`), `/keyboard` (IME `Subscription` + docked composer), `/crash` (interactive recovery fallback), `/devtools` (`MessageLog` Wire WebSocket bridge). | Strong mobile prototypes (`VirtualList`, `AnchoredList`, `KeyboardBar`, `react-native-screens` stacks/sheets, `NativeCrash`, `NativeDevTools`), backed by Expo/RN native packages. |
+| **Live Verification Today** | Verified running live on **Web**, **iOS 27 Simulator**, and **Android 16 Emulator** (including seamless Android edge-to-edge + interactive Native Lab), plus 13 Vitest specs. | Extensive simulated-phone suite (284 `NativeTest` tests); README notes `eui-playground` has not yet been run on a phone or on Android. |
 
 ### Where `foldkit-native` Excels Today (Fair Credit)
 
-`foldkit-native` has invested deeply in mobile app ergonomics and already prototypes several high-value patterns on top of Effect UI:
+`foldkit-native` has invested deeply in mobile chat ergonomics and already prototypes several specialized patterns on top of Effect UI:
 
-- **UI-thread worklet motion (`Motion.animate`):** Integrates `react-native-worklets` + Reanimated so spring and enter/exit animations keep running on the UI thread even when JavaScript is blocked.
-- **Pre-built mobile & AI-chat modules:** Includes `VirtualList` (slot recycling), `AnchoredList` (chat transcript anchoring), `KeyboardBar`, native screen stacks (`react-native-screens`), bottom sheets, a `NativeCrash` recovery screen, and a `NativeDevTools` bridge to `@effect/ui-devtools`.
+- **AI-chat transcript anchoring & streaming markdown:** Includes `AnchoredList` (chat scroll anchoring as replies stream), `react-native-enriched-markdown` integration, and an end-to-end `Effect Chat` port.
+- **Large simulated-phone test corpus:** 284 `NativeTest` unit tests exercising multi-screen chat flows and replay determinism.
 - **RN / Expo view ecosystem reuse:** Apps already depending on specific React Native native views (e.g., `react-native-enriched-markdown`, `expo-audio`, or `@shopify/react-native-skia`) can mount them through `@ng-native/fabric`.
 
 ### Where NativeScript + MasonKit Has a Decisive Structural Advantage
 
-While `foldkit-native` is ahead on a few pre-packaged chat/list helper modules today, the underlying **NativeScript + MasonKit** foundation solves harder structural constraints that cannot easily be retrofitted onto React Native Fabric:
+With UI-thread motion, native detent sheets, recycled 1,000-row virtualized lists, native keyboard subscriptions, crash recovery, and the `@effect/ui-devtools` Wire bridge all shipped in pure TypeScript inside `@nativescript/effect-ui`, the architectural differences are stark:
 
-1. **Write views once — not just reducers:** With `MasonHost`, your `Html.component(...)` views, Tailwind v4 CSS Grid layouts, `<dialog>` modals, `Head.title`, and `@effect/ui-kit` headless components run natively on iOS and Android without maintaining separate web and mobile view layers.
-2. **Zero native bridge tax:** Calling any new iOS, Android, macOS, Windows, or Linux OS API from an Effect `Layer` is plain TypeScript — no C++ JSI/TurboModule specs, no duplicated Swift + Kotlin Expo Module glue, and no 15-minute native rebuilds just to expose another platform method.
-3. **Cleaner runtime with no React/Expo coupling:** Running directly on NativeScript 9.1 + Vite avoids carrying `react`, `react-native`, Metro, Expo prebuild, and `@ng-native/fabric` as intermediate layers just to render native views.
+1. **Write views once — not just reducers:** With `MasonHost`, your `Html.component(...)` views, Tailwind v4 CSS Grid layouts, `<dialog>` modals/sheets, `Head.title`, and `@effect/ui-kit` headless components run natively on iOS and Android without maintaining separate web and mobile view layers.
+2. **Zero native bridge tax:** Every capability above — CoreAnimation springs, `UISheetPresentationController` detents + Liquid Glass, `NSNotificationCenter` / `WindowInsetsCompat` keyboard insets, haptics, and clipboard — is implemented in **pure TypeScript** with zero C++ JSI specs, zero duplicated Swift + Kotlin Expo Modules, and zero native rebuilds when calling new OS APIs.
+3. **Cleaner runtime with no React/Expo coupling:** Running directly on NativeScript 9.1 + Vite avoids carrying `react`, `react-native`, Metro, Expo prebuild, Reanimated/worklets, and `@ng-native/fabric` as intermediate layers just to render native views.
 4. **Mobile *and* Desktop from one host:** Because both NativeScript and MasonKit target macOS, Windows, and Linux alongside iOS and Android, the same Effect UI host scales naturally beyond phones to native desktop apps.
-5. **Every mobile ergonomic is directly buildable in pure TypeScript:** Virtualized recycled lists (`ListView` / `CollectionView`), native CoreAnimation / Android Animator UI-thread transitions, iOS `UISheetPresentationController` bottom sheets, keyboard-docked composers (`@nativescript/input-accessory`), and `@effect/ui-devtools` bridges are all directly reachable from TypeScript on NativeScript — without any Swift/Kotlin bridge layer.
 
 ---
 
@@ -167,9 +175,15 @@ ns-effect-ui/
 ├── packages/
 │   ├── effect-ui/                # @nativescript/effect-ui
 │   │   └── src/
-│   │       ├── mason/            # Strategy B: MasonHost, elements, styles, events, native <dialog>, services, tests
+│   │       ├── mason/            # Strategy B: MasonHost, elements, styles, events, native <dialog>/sheet, services, tests
 │   │       ├── native/           # Strategy A: Native.component vocabulary, NativeHost, NativeCommand
 │   │       ├── platform/         # Effect Services (Haptics, DeviceInfo, AppLifecycle, Clipboard) + Web/Native/Test Layers
+│   │       ├── motion/           # UI-thread CoreAnimation (iOS) & RenderThread ViewPropertyAnimator (Android)
+│   │       ├── sheet/            # Native UISheetPresentationController (iOS 26+ Liquid Glass) & Android bottom sheet
+│   │       ├── list/             # 1,000+ row slot-recycled VirtualList windowing engine
+│   │       ├── keyboard/         # Direct iOS NSNotificationCenter & Android WindowInsetsCompat IME Subscription
+│   │       ├── crash/            # Interactive CrashReport & fallback recovery boundary for MasonHost / NativeHost
+│   │       ├── devtools/         # MessageLog Wire encoding & WebSocket bridge for @effect/ui-devtools
 │   │       └── testing/          # MockMasonHost for fast Node Vitest verification
 │   └── shared-app/               # @ns-effect-ui/shared ("Effect Pulse" — 100% shared app + CSS + Play tests)
 └── apps/

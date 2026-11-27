@@ -263,6 +263,24 @@ export function applyNonControlledProp(
       if ('editable' in view) view['editable'] = !value;
       return;
     }
+    case '__onNativeAction': {
+      const prev = view['__nsNativeActionCb'] as ((ev?: unknown) => void) | undefined;
+      if (prev && typeof rawView.off === 'function') {
+        rawView.off('click', prev);
+        rawView.off('tap', prev);
+      }
+      if (typeof value === 'function') {
+        const fn = value as () => void;
+        const cb = () => fn();
+        view['__nsNativeActionCb'] = cb;
+        if (typeof rawView.on === 'function') {
+          rawView.on('click', cb);
+        }
+      } else {
+        view['__nsNativeActionCb'] = undefined;
+      }
+      return;
+    }
     default: {
       try {
         view[name] = value;
