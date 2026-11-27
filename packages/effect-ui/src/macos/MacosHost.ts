@@ -65,6 +65,15 @@ export interface MacosRunOptions<V extends View.Elements, RF = never, Events = u
   /** Optional PNG path to snapshot the rendered native macOS window and exit (for verification/CI). */
   readonly capturePath?: string | undefined;
   readonly captureDelayMs?: number | undefined;
+  /** Optional lifecycle hook invoked once the native NSWindow is presented and mounted. */
+  readonly onReady?:
+    | ((ctx: {
+        readonly window: any;
+        readonly macos: ReturnType<typeof makeMacosHost>;
+        readonly capture: (outputPath: string, targetWindow?: any) => void;
+        readonly exit: () => void;
+      }) => void)
+    | undefined;
 }
 
 // AppKit classes initialized lazily once `@nativescript/macos-node-api` is loaded.
@@ -98,15 +107,70 @@ function ensureAppKitClasses(): void {
 
   class ClickableNSView extends NSViewCls {
     _onClick?: () => void;
+    _onFocusChange?: (focused: boolean) => void;
+    _isFocused = false;
+    _baseBorderWidth = 0;
+    _baseBorderColor: any = null;
     get isFlipped() {
       return true;
     }
+    get acceptsFirstResponder() {
+      return true;
+    }
+    get canBecomeKeyView() {
+      return true;
+    }
+    becomeFirstResponder() {
+      this._isFocused = true;
+      this._applyFocusVisuals(true);
+      this._onFocusChange?.(true);
+      return true;
+    }
+    resignFirstResponder() {
+      this._isFocused = false;
+      this._applyFocusVisuals(false);
+      this._onFocusChange?.(false);
+      return true;
+    }
+    _applyFocusVisuals(focused: boolean) {
+      try {
+        const layer = this.layer;
+        if (!layer) return;
+        if (focused) {
+          const accent = g('NSColor').controlAccentColor;
+          layer.borderWidth = 3;
+          layer.borderColor = accent.CGColor;
+        } else {
+          layer.borderWidth = this._baseBorderWidth;
+          layer.borderColor = this._baseBorderColor;
+        }
+      } catch {
+        // Ignore
+      }
+    }
     mouseDown(_event: any) {
       if (this.layer) this.layer.opacity = 0.72;
+      try {
+        this.window?.makeFirstResponder(this);
+      } catch {
+        // Ignore
+      }
     }
     mouseUp(_event: any) {
       if (this.layer) this.layer.opacity = 1.0;
       this._onClick?.();
+    }
+    keyDown(event: any) {
+      const code = Number(event?.keyCode ?? -1);
+      if (code === 49 || code === 36 || code === 76) {
+        if (this.layer) this.layer.opacity = 0.72;
+        setTimeout(() => {
+          if (this.layer) this.layer.opacity = 1.0;
+        }, 90);
+        this._onClick?.();
+        return;
+      }
+      super.keyDown(event);
     }
     resetCursorRects() {
       try {
@@ -122,7 +186,14 @@ function ensureAppKitClasses(): void {
 
   class InputDelegate extends NSObjectCls {
     _onChange?: (val: string) => void;
+    _onFocusChange?: (focused: boolean) => void;
     static ObjCProtocols = [g('NSTextFieldDelegate')];
+    controlTextDidBeginEditing(_notification: any) {
+      this._onFocusChange?.(true);
+    }
+    controlTextDidEndEditing(_notification: any) {
+      this._onFocusChange?.(false);
+    }
     controlTextDidChange(notification: any) {
       try {
         const field = notification?.object;
@@ -327,8 +398,12 @@ function makeNativeHtmlServices(): Context.Context<Html.Host> {
     focus: (el: any) => {
       try {
         const node = el as MacosNode;
-        const win = node?.nsInput?.window ?? node?.nsView?.window;
-        if (win && node?.nsInput) win.makeFirstResponder(node.nsInput);
+        const target = node?.nsInput ?? node?.nsView;
+        const win = target?.window ?? node?.nsView?.window;
+        if (win && target) {
+          win.makeFirstResponder(target);
+          target.scrollRectToVisible?.(target.bounds);
+        }
       } catch {
         // Ignore
       }
@@ -405,13 +480,35 @@ export function makeMacosHost(options: {
   readonly host: Renderer.Host<MacosNode>;
   readonly rootContainer: MacosNode;
   readonly relayout: () => void;
+  readonly handleKeyEvent: (event: any, activeWindow: any) => boolean;
+  readonly getFocusRingOrder: (activeWindow?: any) => Array<{ node: MacosNode; view: any }>;
+  readonly getActiveDialogs: () => ReadonlySet<MacosNode>;
   readonly dispose: () => void;
 } {
   ensureAppKitClasses();
 
   const rootContainer = createMacosElementNode('div');
   const activeDialogs = new Set<MacosNode>();
+  const focusOrderByWindow = new Map<any, Array<{ node: MacosNode; view: any }>>();
+  const focusedNodeByWindow = new Map<any, MacosNode>();
   let lastTitle: string | undefined;
+
+  const setInputContainerFocus = (view: any, focused: boolean): void => {
+    try {
+      view._isFocused = focused;
+      const layer = view.layer;
+      if (!layer) return;
+      if (focused) {
+        layer.borderWidth = 3;
+        layer.borderColor = g('NSColor').controlAccentColor.CGColor;
+      } else {
+        layer.borderWidth = view._baseBorderWidth ?? 0;
+        layer.borderColor = view._baseBorderColor ?? null;
+      }
+    } catch {
+      // Ignore
+    }
+  };
 
   const ensureNSView = (node: MacosNode, isClickable: boolean): any => {
     if (node.nsView) return node.nsView;
@@ -427,6 +524,10 @@ export function makeMacosHost(options: {
           }
         }
         fireBubble(node, 'click', {});
+      };
+      view._onFocusChange = (focused: boolean) => {
+        if (focused && view.window) focusedNodeByWindow.set(view.window, node);
+        fireBubble(node, focused ? 'focus' : 'blur', {});
       };
     }
     node.nsView = view;
@@ -449,8 +550,22 @@ export function makeMacosHost(options: {
     const layer = view.layer;
     if (layer) {
       layer.backgroundColor = style.backgroundColor ? toNSColor(style.backgroundColor).CGColor : null;
-      layer.borderWidth = style.borderWidth;
-      layer.borderColor = style.borderColor ? toNSColor(style.borderColor).CGColor : null;
+      const baseBorderColor = style.borderColor ? toNSColor(style.borderColor).CGColor : null;
+      view._baseBorderWidth = style.borderWidth;
+      view._baseBorderColor = baseBorderColor;
+      const isTrackedFocused = (() => {
+        for (const tracked of focusedNodeByWindow.values()) {
+          if (tracked === node) return true;
+        }
+        return false;
+      })();
+      if (view._isFocused || isTrackedFocused) {
+        layer.borderWidth = 3;
+        layer.borderColor = g('NSColor').controlAccentColor.CGColor;
+      } else {
+        layer.borderWidth = style.borderWidth;
+        layer.borderColor = baseBorderColor;
+      }
       const maxR = Math.min(rect.width, rect.height) / 2;
       layer.cornerRadius = style.borderRadius >= 999 ? maxR : Math.min(style.borderRadius, maxR);
       layer.masksToBounds = style.borderRadius > 0;
@@ -467,11 +582,16 @@ export function makeMacosHost(options: {
         tf.isSelectable = true;
         tf.isBordered = false;
         tf.drawsBackground = false;
-        tf.focusRingType = 1; // NSFocusRingTypeNone
+        tf.focusRingType = 1; // NSFocusRingTypeNone (drawn cleanly on outer rounded border)
         const del = InputDelegateCtor.new();
         del._onChange = (val: string) => {
           node.props['value'] = val;
           fireBubble(node, 'input', { value: val });
+        };
+        del._onFocusChange = (focused: boolean) => {
+          setInputContainerFocus(view, focused);
+          if (focused && view.window) focusedNodeByWindow.set(view.window, node);
+          fireBubble(node, focused ? 'focus' : 'blur', {});
         };
         tf.delegate = del;
         (node as any)._inputDelegate = del;
@@ -589,6 +709,209 @@ export function makeMacosHost(options: {
     }
   };
 
+  const collectFocusable = (
+    node: MacosNode,
+    out: Array<{ node: MacosNode; view: any }>,
+    allowDialog = false,
+  ): void => {
+    const ln = node.layoutNode;
+    if (!ln || ln.style.display === 'none' || (node.tag === 'dialog' && !allowDialog)) return;
+    const disabled = node.attrs['disabled'] !== undefined || node.props['disabled'] === true;
+    const tabIndex = node.attrs['tabindex'];
+    if (!disabled && tabIndex !== '-1') {
+      if (node.tag === 'input' && node.nsInput) {
+        out.push({ node, view: node.nsInput });
+      } else if ((node.tag === 'button' || Boolean(node.handlers['click'])) && node.nsView) {
+        out.push({ node, view: node.nsView });
+      }
+    }
+    const childElements = ln.text === undefined ? collectElementChildren(node) : [];
+    for (const ch of childElements) {
+      collectFocusable(ch, out, false);
+    }
+  };
+
+  const wireKeyViewLoop = (root: MacosNode, win: any, allowDialog = false): void => {
+    if (!win) return;
+    const list: Array<{ node: MacosNode; view: any }> = [];
+    collectFocusable(root, list, allowDialog);
+    focusOrderByWindow.set(win, list);
+    try {
+      win.autorecalculatesKeyViewLoop = false;
+      for (let i = 0; i < list.length; i++) {
+        const cur = list[i]!.view;
+        const next = list[(i + 1) % list.length]!.view;
+        cur.nextKeyView = next;
+      }
+      if (list.length > 0) {
+        const preferred = allowDialog
+          ? list.find((item) => Boolean(item.node.nsInput)) ?? list[0]!
+          : list[0]!;
+        win.initialFirstResponder = preferred.view;
+      }
+    } catch {
+      // Ignore
+    }
+  };
+
+  const isSameObjC = (a: any, b: any): boolean => {
+    if (!a || !b) return false;
+    if (a === b) return true;
+    try {
+      return Boolean(a.isEqual?.(b));
+    } catch {
+      return false;
+    }
+  };
+
+  const getFocusListForWindow = (win: any): Array<{ node: MacosNode; view: any }> => {
+    if (!win) return [];
+    const direct = focusOrderByWindow.get(win);
+    if (direct) return direct;
+    for (const [k, v] of focusOrderByWindow) {
+      if (isSameObjC(k, win)) return v;
+    }
+    return [];
+  };
+
+  const findFocusedIndex = (
+    list: Array<{ node: MacosNode; view: any }>,
+    win: any,
+  ): number => {
+    try {
+      const fr = win?.firstResponder;
+      if (fr) {
+        for (let i = 0; i < list.length; i++) {
+          const item = list[i]!;
+          if (isSameObjC(item.view, fr)) return i;
+          // AppKit field editor (NSTextView) has delegate or superview === NSTextField
+          if (
+            item.node.nsInput &&
+            (isSameObjC(fr, item.node.nsInput) ||
+              isSameObjC(fr.delegate, item.node.nsInput) ||
+              isSameObjC(fr.superview, item.node.nsInput) ||
+              isSameObjC(fr.superview?.superview, item.node.nsInput))
+          ) {
+            return i;
+          }
+        }
+      }
+      // Check tracked focused node for this window (covers transient field-editor states)
+      for (const [k, tracked] of focusedNodeByWindow) {
+        if (isSameObjC(k, win)) {
+          const idx = list.findIndex((item) => item.node === tracked);
+          if (idx >= 0) return idx;
+        }
+      }
+      // Fallback: check our tracked _isFocused flag on outer NSView
+      for (let i = 0; i < list.length; i++) {
+        if (list[i]!.node.nsView?._isFocused) return i;
+      }
+    } catch {
+      // Ignore
+    }
+    return -1;
+  };
+
+  const focusEntry = (
+    win: any,
+    list: Array<{ node: MacosNode; view: any }>,
+    nextIdx: number,
+  ): void => {
+    if (nextIdx < 0 || nextIdx >= list.length) return;
+    // Clear any stale _isFocused border across the window first
+    for (const item of list) {
+      if (item.node.nsInput && item.node.nsView?._isFocused) {
+        setInputContainerFocus(item.node.nsView, false);
+      } else if (item.node.nsView?._isFocused && item.node.nsView?._applyFocusVisuals) {
+        item.node.nsView._isFocused = false;
+        item.node.nsView._applyFocusVisuals(false);
+      }
+    }
+    const target = list[nextIdx]!;
+    focusedNodeByWindow.set(win, target.node);
+    win.makeFirstResponder(target.view);
+    if (target.node.nsInput && target.node.nsView) {
+      setInputContainerFocus(target.node.nsView, true);
+    } else if (target.node.nsView?._applyFocusVisuals) {
+      target.node.nsView._isFocused = true;
+      target.node.nsView._applyFocusVisuals(true);
+    }
+    const scrollViewTarget = target.node.nsView ?? target.view;
+    scrollViewTarget?.scrollRectToVisible?.(scrollViewTarget.bounds);
+  };
+
+  const handleKeyEvent = (event: any, activeWindow: any): boolean => {
+    try {
+      // NSEventTypeKeyDown = 10
+      if (Number(event?.type ?? -1) !== 10) return false;
+      const code = Number(event?.keyCode ?? -1);
+      const flags = Number(event?.modifierFlags ?? 0);
+      const shift = (flags & (1 << 17)) !== 0;
+
+      // Prefer an open modal sheet if one is active
+      let targetWin = activeWindow;
+      let activeDlg: MacosNode | undefined;
+      for (const dlg of activeDialogs) {
+        if (dlg.dialogWindow) {
+          activeDlg = dlg;
+          targetWin = dlg.dialogWindow;
+        }
+      }
+      if (!targetWin) targetWin = options.getHostWindow();
+      const list = getFocusListForWindow(targetWin);
+
+      // Escape dismisses active modal sheet
+      if (code === 53 && activeDlg) {
+        fireBubble(activeDlg, 'cancel', { cancelable: true });
+        return true;
+      }
+
+      // Tab / Shift+Tab advances native AppKit firstResponder along the key view loop
+      if (code === 48 && list.length > 0) {
+        const curIdx = findFocusedIndex(list, targetWin);
+        const nextIdx =
+          curIdx < 0
+            ? shift
+              ? list.length - 1
+              : 0
+            : (curIdx + (shift ? -1 : 1) + list.length) % list.length;
+        focusEntry(targetWin, list, nextIdx);
+        return true;
+      }
+
+      // Space or Return on a focused ClickableNSView activates it
+      if (code === 49 || code === 36 || code === 76) {
+        const curIdx = findFocusedIndex(list, targetWin);
+        if (curIdx >= 0) {
+          const focused = list[curIdx]!;
+          if (focused.node.nsInput) {
+            // Return inside an input submits its enclosing <form>
+            if (code === 36 || code === 76) {
+              const form = findAncestorTag(focused.node, 'form');
+              if (form) {
+                fireBubble(form, 'submit', { values: collectFormValues(form) });
+                return true;
+              }
+            }
+            return false;
+          }
+          if (focused.view?._onClick) {
+            if (focused.view.layer) focused.view.layer.opacity = 0.72;
+            setTimeout(() => {
+              if (focused.view.layer) focused.view.layer.opacity = 1.0;
+            }, 90);
+            focused.view._onClick();
+            return true;
+          }
+        }
+      }
+    } catch {
+      // Ignore
+    }
+    return false;
+  };
+
   const syncDialogs = (root: MacosNode, dark: boolean): void => {
     const foundDialogs: Array<MacosNode> = [];
     const walk = (n: MacosNode) => {
@@ -639,6 +962,7 @@ export function makeMacosHost(options: {
 
         syncNSViewTree(dlg, contentRoot, true);
         dlg.dialogWindow = panel;
+        wireKeyViewLoop(dlg, panel, true);
 
         const hostWin = options.getHostWindow();
         if (hostWin) {
@@ -646,6 +970,12 @@ export function makeMacosHost(options: {
         } else {
           panel.center();
           panel.makeKeyAndOrderFront(null);
+        }
+        // Automatically focus the first text input (or first control) inside the modal sheet
+        const dlgList = getFocusListForWindow(panel);
+        if (dlgList.length > 0) {
+          const inputIdx = dlgList.findIndex((item) => Boolean(item.node.nsInput));
+          focusEntry(panel, dlgList, inputIdx >= 0 ? inputIdx : 0);
         }
       } else if (wantOpen && isOpen && dlg.dialogWindow) {
         const pal = dark ? darkPalette : lightPalette;
@@ -655,14 +985,20 @@ export function makeMacosHost(options: {
         const dlgH = Math.max(240, m.height + 16);
         layoutTree(ln, 0, 0, dlgW, dlgH, measureAppKitText);
         syncNSViewTree(dlg, dlg.dialogWindow.contentView, true);
+        wireKeyViewLoop(dlg, dlg.dialogWindow, true);
       } else if (!wantOpen && isOpen) {
         activeDialogs.delete(dlg);
         const panel = dlg.dialogWindow;
         dlg.dialogWindow = undefined;
         if (panel) {
+          focusOrderByWindow.delete(panel);
+          focusedNodeByWindow.delete(panel);
           const hostWin = options.getHostWindow();
           try {
-            if (hostWin) hostWin.endSheet(panel);
+            if (hostWin) {
+              hostWin.endSheet(panel);
+              hostWin.makeKeyAndOrderFront(null);
+            }
             panel.orderOut(null);
           } catch {
             // Ignore
@@ -690,6 +1026,7 @@ export function makeMacosHost(options: {
     if (primary.nsView) {
       options.attachRootView(primary.nsView, totalH);
     }
+    wireKeyViewLoop(primary, options.getHostWindow(), false);
     syncDialogs(rootContainer, dark);
   };
 
@@ -804,6 +1141,9 @@ export function makeMacosHost(options: {
     host,
     rootContainer,
     relayout,
+    handleKeyEvent,
+    getFocusRingOrder: (win) => focusOrderByWindow.get(win ?? options.getHostWindow()) ?? [],
+    getActiveDialogs: () => activeDialogs,
     dispose: () => {
       for (const dlg of activeDialogs) {
         try {
@@ -813,6 +1153,7 @@ export function makeMacosHost(options: {
         }
       }
       activeDialogs.clear();
+      focusOrderByWindow.clear();
     },
   };
 }
@@ -987,6 +1328,24 @@ export async function run<
   NSApp.finishLaunching();
   NSApp.activateIgnoringOtherApps(true);
 
+  if (options?.onReady) {
+    options.onReady({
+      window,
+      macos,
+      capture: (outputPath: string, targetWindow?: any) => {
+        macos.relayout();
+        const target = targetWindow ?? window;
+        target.displayIfNeeded();
+        captureWindowToPng(target, outputPath);
+      },
+      exit: () => {
+        appDelegate.running = false;
+        macos.dispose();
+        process.exit(0);
+      },
+    });
+  }
+
   if (options?.capturePath) {
     const delay = options.captureDelayMs ?? 900;
     setTimeout(() => {
@@ -1009,7 +1368,9 @@ export async function run<
         true,
       );
       if (!ev) break;
-      NSApp.sendEvent(ev);
+      if (!macos.handleKeyEvent(ev, NSApp.keyWindow ?? window)) {
+        NSApp.sendEvent(ev);
+      }
       drained += 1;
     }
     NSApp.updateWindows();
