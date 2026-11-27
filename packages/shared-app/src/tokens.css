@@ -1,50 +1,58 @@
 /*
  * Shared design tokens for Web (`BrowserHost`) and NativeScript (`MasonHost`).
+ * Matches the Effect v4 documentation palette (effect.website/docs/v4/onboarding):
+ * crisp Zinc surfaces paired with Effect Emerald brand accents.
  * Uses plain hex values so NativeScript CSS & MasonKit parse every token natively.
  * Web toggles `.dark`; NativeScript stamps `.ns-light` / `.ns-dark` on the root view.
  */
 :root,
 .ns-light {
-  --background: #f4efe6;
-  --foreground: #122625;
-  --card: #fbf8f2;
-  --card-foreground: #122625;
-  --primary: #1f6b60;
-  --primary-foreground: #f8f5ef;
-  --secondary: #e7decb;
-  --secondary-foreground: #122625;
-  --muted: #ebe3d3;
-  --muted-foreground: #4c6460;
-  --accent: #d4e8e3;
-  --accent-foreground: #122625;
-  --destructive: #c0432d;
+  --background: #ffffff;
+  --foreground: #18181b;
+  --card: #fafafa;
+  --card-foreground: #18181b;
+  --primary: #18181b;
+  --primary-foreground: #fafafa;
+  --brand: #00bc7d;
+  --brand-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #52525c;
+  --accent: #e4e4e7;
+  --accent-foreground: #18181b;
+  --destructive: #e7000b;
   --destructive-foreground: #ffffff;
-  --success: #247a4e;
-  --warning: #b87616;
-  --border: #d8ccb5;
-  --input: #c6b89e;
+  --success: #00bc7d;
+  --warning: #d97706;
+  --border: #e4e4e7;
+  --input: #d4d4d8;
+  --ring: #00bc7d;
 }
 
 .dark,
 .ns-dark {
-  --background: #131817;
-  --foreground: #f1ece2;
-  --card: #1b2220;
-  --card-foreground: #f1ece2;
-  --primary: #52a898;
-  --primary-foreground: #0d1917;
-  --secondary: #26302d;
-  --secondary-foreground: #f1ece2;
-  --muted: #222b28;
-  --muted-foreground: #a5b4af;
-  --accent: #213c37;
-  --accent-foreground: #f1ece2;
-  --destructive: #e0725c;
-  --destructive-foreground: #1a0b08;
-  --success: #4cc284;
-  --warning: #e0a640;
-  --border: #313d39;
-  --input: #475751;
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #18181b;
+  --card-foreground: #fafafa;
+  --primary: #fafafa;
+  --primary-foreground: #18181b;
+  --brand: #00d492;
+  --brand-foreground: #09090b;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #9f9fa9;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --destructive: #fb2c36;
+  --destructive-foreground: #ffffff;
+  --success: #00d492;
+  --warning: #f59e0b;
+  --border: #27272a;
+  --input: #3f3f46;
+  --ring: #00d492;
 }
 
 @theme inline {
@@ -54,6 +62,8 @@
   --color-card-foreground: var(--card-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -66,4 +76,5 @@
   --color-warning: var(--warning);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-ring: var(--ring);
 }

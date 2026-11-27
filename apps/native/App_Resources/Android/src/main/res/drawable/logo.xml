@@ -1,15 +1,17 @@
-<!-- The Tideline mark (docs/brand/tideline-logo.svg) for the splash screen; colours follow day/night. -->
+<!-- Effect layered squares x NativeScript {N} splash mark; top layer adapts to day/night theme. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="120dp"
     android:height="120dp"
-    android:viewportWidth="1092"
-    android:viewportHeight="1092">
-    <group android:translateX="-124" android:translateY="-123">
-        <path android:fillColor="@color/tideline_primary" android:pathData="M553,153L182,325L216,877Z M787,153L1157,325L1122,877Z M669,429L802,751L537,751Z"/>
-        <group>
-            <clip-path android:pathData="M466,915Q567,875 669,915T873,915L923,1040L669,1184L415,1040Z"/>
-            <path android:fillColor="@color/tideline_deep" android:pathData="M100,800L100,992L380,992Q550,947 669,992T960,992L1240,992L1240,800Z"/>
-            <path android:fillColor="@color/tideline_deep" android:pathData="M100,1008L380,1008Q550,963 669,1008T960,1008L1240,1008L1240,1250L100,1250Z"/>
-        </group>
-    </group>
+    android:viewportWidth="180"
+    android:viewportHeight="180">
+    <path
+        android:fillColor="@color/splash_mark_top"
+        android:fillType="evenOdd"
+        android:pathData="M 84.4 23.2 Q 90 20.0 95.6 23.2 L 153.8 56.8 Q 159.4 60.0 153.8 63.2 L 95.6 96.8 Q 90 100.0 84.4 96.8 L 26.2 63.2 Q 20.6 60.0 26.2 56.8 Z M 78.65 41.18 L 101.35 62.74 L 101.35 41.18 L 106.51 41.18 C 111.16 41.18 113.22 43.54 113.22 47.06 L 113.22 55.30 C 113.22 58.24 115.28 59.61 119.41 60.00 C 115.28 60.39 113.22 61.76 113.22 64.70 L 113.22 72.94 C 113.22 76.46 111.16 78.82 106.51 78.82 L 101.35 78.82 L 78.65 57.26 L 78.65 78.82 L 73.49 78.82 C 68.84 78.82 66.78 76.46 66.78 72.94 L 66.78 64.70 C 66.78 61.76 64.72 60.39 60.59 60.00 C 64.72 59.61 66.78 58.24 66.78 55.30 L 66.78 47.06 C 66.78 43.54 68.84 41.18 73.49 41.18 Z" />
+    <path
+        android:fillColor="@color/splash_mark_mid"
+        android:pathData="M 25.90 88.80 C 27.40 86.20 30.70 85.30 33.30 86.80 L 90.0 120.20 L 146.70 86.80 C 149.30 85.30 152.60 86.20 154.10 88.80 C 155.60 91.40 154.70 94.70 152.10 96.20 L 93.4 131.80 Q 90.0 133.70 86.6 131.80 L 27.90 96.20 C 25.30 94.70 24.40 91.40 25.90 88.80 Z" />
+    <path
+        android:fillColor="@color/splash_mark_bottom"
+        android:pathData="M 25.90 115.80 C 27.40 113.20 30.70 112.30 33.30 113.80 L 90.0 147.20 L 146.70 113.80 C 149.30 112.30 152.60 113.20 154.10 115.80 C 155.60 118.40 154.70 121.70 152.10 123.20 L 93.4 158.80 Q 90.0 160.70 86.6 158.80 L 27.90 123.20 C 25.30 121.70 24.40 118.40 25.90 115.80 Z" />
 </vector>

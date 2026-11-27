@@ -5,23 +5,25 @@
  */
 
 .ep-hero-banner {
-  background: linear-gradient(135deg, #1b5c52, #2e8477);
-  color: #f8f5ef;
+  background: linear-gradient(135deg, #18181b, #09090b);
+  border: 1px solid #27272a;
+  color: #fafafa;
 }
 
 .dark .ep-hero-banner,
 .ns-dark .ep-hero-banner {
-  background: linear-gradient(135deg, #1a4741, #27685e);
-  color: #f4efe6;
+  background: linear-gradient(135deg, #18181b, #141315);
+  border: 1px solid #27272a;
+  color: #fafafa;
 }
 
 .ep-hero-subtitle {
-  color: rgba(248, 245, 239, 0.85);
+  color: #a1a1aa;
 }
 
 .ep-hero-pill {
-  background-color: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+  background-color: rgba(0, 212, 146, 0.14);
+  color: #00d492;
 }
 
 .ep-filter-btn {
@@ -35,13 +37,23 @@
 }
 
 .ep-priority-high {
-  background-color: rgba(192, 67, 45, 0.14);
+  background-color: rgba(231, 0, 11, 0.12);
   color: var(--destructive);
 }
 
+.dark .ep-priority-high,
+.ns-dark .ep-priority-high {
+  background-color: rgba(251, 44, 54, 0.16);
+}
+
 .ep-priority-normal {
-  background-color: rgba(31, 107, 96, 0.14);
-  color: var(--primary);
+  background-color: rgba(0, 188, 125, 0.14);
+  color: var(--brand);
+}
+
+.dark .ep-priority-normal,
+.ns-dark .ep-priority-normal {
+  background-color: rgba(0, 212, 146, 0.16);
 }
 
 .ep-priority-low {
@@ -55,9 +67,9 @@
 }
 
 .ep-check-circle[data-done="true"] {
-  border-color: var(--primary);
-  background-color: var(--primary);
-  color: var(--primary-foreground);
+  border-color: var(--brand);
+  background-color: var(--brand);
+  color: var(--brand-foreground);
 }
 
 .ep-task-title[data-done="true"] {
@@ -76,7 +88,7 @@
 
 .ep-switch-track[data-checked] {
   justify-content: flex-end;
-  background-color: var(--primary);
+  background-color: var(--brand);
 }
 
 .ep-switch-thumb {
@@ -96,5 +108,5 @@
 }
 
 .ep-dot-live {
-  background-color: var(--success);
+  background-color: var(--brand);
 }
