@@ -4,7 +4,7 @@
  *
  * This module has ZERO platform-specific imports, so shared Effect UI
  * components, web apps, and Node Vitest suites can import it safely.
- * NativeScript implementations live in `@nativescript/effect-ui/platform/native`.
+ * NativeScript implementations live in `@nstudio/nativescript-effect-ui/platform/native`.
  */
 import * as Context from 'effect/Context';
 import * as Effect from 'effect/Effect';
@@ -27,7 +27,7 @@ export class Haptics extends Context.Service<
     readonly warning: Effect.Effect<void>;
     readonly error: Effect.Effect<void>;
   }
->()('@nativescript/effect-ui/platform/Haptics') {
+>()('@nstudio/nativescript-effect-ui/platform/Haptics') {
   static make(trigger: (style: HapticStyle) => Effect.Effect<void>) {
     return {
       trigger,
@@ -95,7 +95,7 @@ export class DeviceInfo extends Context.Service<
   {
     readonly info: DeviceInfoData;
   }
->()('@nativescript/effect-ui/platform/DeviceInfo') {
+>()('@nstudio/nativescript-effect-ui/platform/DeviceInfo') {
   static readonly webLayer: Layer.Layer<DeviceInfo> = Layer.sync(DeviceInfo, () => ({
     info: {
       platform: 'web' as const,
@@ -134,7 +134,7 @@ export class AppLifecycle extends Context.Service<
     readonly appearance: Effect.Effect<AppAppearance>;
     readonly state: Effect.Effect<AppState>;
   }
->()('@nativescript/effect-ui/platform/AppLifecycle') {
+>()('@nstudio/nativescript-effect-ui/platform/AppLifecycle') {
   static readonly webLayer: Layer.Layer<AppLifecycle> = Layer.succeed(AppLifecycle, {
     appearance: Effect.sync(() => {
       if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
@@ -169,7 +169,7 @@ export class Clipboard extends Context.Service<
     readonly copy: (text: string) => Effect.Effect<void>;
     readonly read: Effect.Effect<string>;
   }
->()('@nativescript/effect-ui/platform/Clipboard') {
+>()('@nstudio/nativescript-effect-ui/platform/Clipboard') {
   static readonly webLayer: Layer.Layer<Clipboard> = Layer.succeed(Clipboard, {
     copy: (text) =>
       Effect.promise(async () => {

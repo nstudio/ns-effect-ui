@@ -1,7 +1,7 @@
 /**
  * NativeScript implementations of the platform Effect services (`Haptics`,
  * `DeviceInfo`, `AppLifecycle`, `Clipboard`) using direct iOS & Android native
- * APIs — zero third-party native plugins required.
+ * APIs: zero third-party native plugins required.
  */
 import { Application, Device, isAndroid, isIOS, Utils } from '@nativescript/core';
 import * as Effect from 'effect/Effect';

@@ -60,7 +60,7 @@ export class Host extends Context.Service<
     readonly measure: (node: NSView) => NativeRect;
     readonly animate: (node: NSView, options: NativeAnimateOptions) => Promise<void>;
   }
->()('@nativescript/effect-ui/Native/Host') {}
+>()('@nstudio/nativescript-effect-ui/Native/Host') {}
 
 declare module '@effect/ui/Command' {
   interface FrameworkServices {

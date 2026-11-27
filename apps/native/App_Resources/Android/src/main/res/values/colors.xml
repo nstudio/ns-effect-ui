@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <resources>
-    <!-- ActionBar & status bar surface tokens matching Effect v4 light theme -->
-    <color name="ns_primary">#FAFAFA</color>
+    <!-- ActionBar & status bar surface tokens matching crisp monochrome light theme -->
+    <color name="ns_primary">#FFFFFF</color>
     <color name="ns_primaryDark">#E4E4E7</color>
 
-    <!-- Native Android control accent (Switch, SeekBar, ProgressBar) — Effect Emerald -->
-    <color name="ns_accent">#00BC7D</color>
+    <!-- Native Android control accent (Switch, SeekBar, ProgressBar) -->
+    <color name="ns_accent">#18181B</color>
 
     <!-- Window & splash background matching packages/shared-app/src/tokens.css -->
     <color name="ns_background">#FFFFFF</color>
 
-    <!-- Material 3 roles aligned with Effect v4 Zinc + Emerald tokens -->
-    <color name="ns_brand_primary">#00BC7D</color>
+    <!-- Material 3 roles aligned with crisp monochrome Zinc tokens -->
+    <color name="ns_brand_primary">#18181B</color>
     <color name="ns_secondary_container">#F4F4F5</color>
     <color name="ns_surface_container">#FAFAFA</color>
-    <color name="ns_foreground">#18181B</color>
-    <color name="ns_muted_foreground">#52525C</color>
+    <color name="ns_foreground">#09090B</color>
+    <color name="ns_muted_foreground">#71717A</color>
 
     <!-- Effect x NativeScript splash mark (drawable/logo.xml) -->
-    <color name="splash_mark_top">#18181B</color>
-    <color name="splash_mark_mid">#00BC7D</color>
-    <color name="splash_mark_bottom">#65ADF1</color>
+    <color name="splash_mark_top">#09090B</color>
+    <color name="splash_mark_mid">#52525B</color>
+    <color name="splash_mark_bottom">#A1A1AA</color>
 </resources>

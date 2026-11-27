@@ -8,7 +8,7 @@ import { Locator, Play, TestHost } from '@effect/ui/testing';
 import {
   type HapticStyle,
   makeTestPlatformLayer,
-} from '@nativescript/effect-ui/platform';
+} from '@nstudio/nativescript-effect-ui/platform';
 import * as Effect from 'effect/Effect';
 import * as Layer from 'effect/Layer';
 import { describe, expect, it } from 'vitest';

@@ -7,7 +7,7 @@
   "description": "Host-agnostic Effect UI on NativeScript & MasonKit — one Effect UI application across Web, iOS, and Android",
   "packageManager": "pnpm@10.33.4",
   "scripts": {
-    "check": "pnpm --filter @nativescript/effect-ui check && pnpm --filter @ns-effect-ui/shared check && pnpm --filter @ns-effect-ui/web check && pnpm --filter @ns-effect-ui/native check",
+    "check": "pnpm --filter @nstudio/nativescript-effect-ui check && pnpm --filter @ns-effect-ui/shared check && pnpm --filter @ns-effect-ui/web check && pnpm --filter @ns-effect-ui/native check",
     "test": "vitest run",
     "test:watch": "vitest",
     "dev:web": "pnpm --filter @ns-effect-ui/web dev",

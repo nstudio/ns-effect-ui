@@ -1,6 +1,6 @@
 /**
  * Native keyboard height/phase `Subscription` and docked composer helpers for
- * `@nativescript/effect-ui` — zero plugins.
+ * `@nstudio/nativescript-effect-ui`: zero plugins.
  *
  * - **iOS:** Subscribes directly to `NSNotificationCenter.defaultCenter`
  *   (`UIKeyboardWillChangeFrameNotification` / `UIKeyboardWillHideNotification`).
@@ -48,7 +48,7 @@ export interface KeyboardServiceShape {
  * animation duration, and programmatic dismissal.
  */
 export class Keyboard extends Context.Service<Keyboard, KeyboardServiceShape>()(
-  '@nativescript/effect-ui/Keyboard',
+  '@nstudio/nativescript-effect-ui/Keyboard',
 ) {}
 
 /**

@@ -1,18 +1,17 @@
 /*
  * Shared semantic styles for Web (`BrowserHost`) and NativeScript (`MasonHost`).
- * Lengths come from Tailwind utilities in the component views; this file holds
- * unit-free colors, flex alignment states, and attribute-selector variants.
+ * Pure black-and-white monochrome styling inspired by ui.effect.website.
  */
 
 .ep-hero-banner {
-  background: linear-gradient(135deg, #18181b, #09090b);
+  background-color: #09090b;
   border: 1px solid #27272a;
-  color: #fafafa;
+  color: #ffffff;
 }
 
 .dark .ep-hero-banner,
 .ns-dark .ep-hero-banner {
-  background: linear-gradient(135deg, #18181b, #141315);
+  background-color: #111113;
   border: 1px solid #27272a;
   color: #fafafa;
 }
@@ -22,8 +21,8 @@
 }
 
 .ep-hero-pill {
-  background-color: rgba(0, 212, 146, 0.14);
-  color: #00d492;
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #fafafa;
 }
 
 .ep-filter-btn {
@@ -37,23 +36,13 @@
 }
 
 .ep-priority-high {
-  background-color: rgba(231, 0, 11, 0.12);
-  color: var(--destructive);
-}
-
-.dark .ep-priority-high,
-.ns-dark .ep-priority-high {
-  background-color: rgba(251, 44, 54, 0.16);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .ep-priority-normal {
-  background-color: rgba(0, 188, 125, 0.14);
-  color: var(--brand);
-}
-
-.dark .ep-priority-normal,
-.ns-dark .ep-priority-normal {
-  background-color: rgba(0, 212, 146, 0.16);
+  background-color: var(--secondary);
+  color: var(--foreground);
 }
 
 .ep-priority-low {
@@ -67,9 +56,9 @@
 }
 
 .ep-check-circle[data-done="true"] {
-  border-color: var(--brand);
-  background-color: var(--brand);
-  color: var(--brand-foreground);
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .ep-task-title[data-done="true"] {
@@ -77,7 +66,7 @@
   text-decoration: line-through;
 }
 
-/* @effect/ui-kit Switch — flex-based thumb placement works identically on Web and MasonKit */
+/* @effect/ui-kit Switch: flex-based thumb placement works identically on Web and MasonKit */
 .ep-switch-track {
   display: flex;
   flex-direction: row;
@@ -88,11 +77,11 @@
 
 .ep-switch-track[data-checked] {
   justify-content: flex-end;
-  background-color: var(--brand);
+  background-color: var(--primary);
 }
 
 .ep-switch-thumb {
-  background-color: #ffffff;
+  background-color: var(--primary-foreground);
 }
 
 .ep-priority-pick {
@@ -108,5 +97,5 @@
 }
 
 .ep-dot-live {
-  background-color: var(--brand);
+  background-color: var(--primary);
 }

@@ -1,58 +1,57 @@
 /*
  * Shared design tokens for Web (`BrowserHost`) and NativeScript (`MasonHost`).
- * Matches the Effect v4 documentation palette (effect.website/docs/v4/onboarding):
- * crisp Zinc surfaces paired with Effect Emerald brand accents.
+ * Crisp black-and-white monochrome palette inspired by ui.effect.website.
  * Uses plain hex values so NativeScript CSS & MasonKit parse every token natively.
  * Web toggles `.dark`; NativeScript stamps `.ns-light` / `.ns-dark` on the root view.
  */
 :root,
 .ns-light {
   --background: #ffffff;
-  --foreground: #18181b;
+  --foreground: #09090b;
   --card: #fafafa;
-  --card-foreground: #18181b;
-  --primary: #18181b;
-  --primary-foreground: #fafafa;
-  --brand: #00bc7d;
+  --card-foreground: #09090b;
+  --primary: #09090b;
+  --primary-foreground: #ffffff;
+  --brand: #18181b;
   --brand-foreground: #ffffff;
   --secondary: #f4f4f5;
   --secondary-foreground: #18181b;
   --muted: #f4f4f5;
-  --muted-foreground: #52525c;
+  --muted-foreground: #71717a;
   --accent: #e4e4e7;
-  --accent-foreground: #18181b;
-  --destructive: #e7000b;
+  --accent-foreground: #09090b;
+  --destructive: #18181b;
   --destructive-foreground: #ffffff;
-  --success: #00bc7d;
-  --warning: #d97706;
+  --success: #18181b;
+  --warning: #52525b;
   --border: #e4e4e7;
   --input: #d4d4d8;
-  --ring: #00bc7d;
+  --ring: #18181b;
 }
 
 .dark,
 .ns-dark {
-  --background: #09090b;
+  --background: #000000;
   --foreground: #fafafa;
-  --card: #18181b;
+  --card: #0c0c0e;
   --card-foreground: #fafafa;
   --primary: #fafafa;
-  --primary-foreground: #18181b;
-  --brand: #00d492;
+  --primary-foreground: #09090b;
+  --brand: #fafafa;
   --brand-foreground: #09090b;
-  --secondary: #27272a;
+  --secondary: #18181b;
   --secondary-foreground: #fafafa;
-  --muted: #27272a;
-  --muted-foreground: #9f9fa9;
+  --muted: #18181b;
+  --muted-foreground: #a1a1aa;
   --accent: #27272a;
   --accent-foreground: #fafafa;
-  --destructive: #fb2c36;
-  --destructive-foreground: #ffffff;
-  --success: #00d492;
-  --warning: #f59e0b;
+  --destructive: #fafafa;
+  --destructive-foreground: #09090b;
+  --success: #fafafa;
+  --warning: #a1a1aa;
   --border: #27272a;
   --input: #3f3f46;
-  --ring: #00d492;
+  --ring: #fafafa;
 }
 
 @theme inline {

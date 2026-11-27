@@ -1,5 +1,5 @@
 /**
- * Host-agnostic slot-recycled `VirtualList` for `@nativescript/effect-ui`.
+ * Host-agnostic slot-recycled `VirtualList` for `@nstudio/nativescript-effect-ui`.
  *
  * Works identically across `MasonHost`, `NativeHost`, and `BrowserHost`:
  * - Keeps a small bounded window of visible + overscan rows in the Effect UI Model.

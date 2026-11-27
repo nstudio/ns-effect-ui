@@ -1,9 +1,9 @@
 /**
  * Domain Schemas, Commands, and async Queries for the shared Effect Pulse app.
- * 100% host-agnostic — zero platform or browser imports.
+ * 100% host-agnostic: zero platform or browser imports.
  */
 import { Command, Query } from '@effect/ui';
-import { DeviceInfo, Haptics, type HapticStyle } from '@nativescript/effect-ui/platform';
+import { DeviceInfo, Haptics, type HapticStyle } from '@nstudio/nativescript-effect-ui/platform';
 import * as Effect from 'effect/Effect';
 import * as Schema from 'effect/Schema';
 

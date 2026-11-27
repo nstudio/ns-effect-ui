@@ -19,7 +19,7 @@ process.env['NS_VENDOR_EXCLUDE'] = rootDeps.filter((dep) => !appDeps.includes(de
  * MasonKit natively supports modern CSS Grid, Flexbox, `gap`, positioning, and
  * overflow via Rust/Taffy. `@nativescript/tailwind@4.0.10` strips those
  * declarations by default; we stash them into custom properties before
- * `@nativescript/tailwind` runs and restore them right after with DIP units —
+ * `@nativescript/tailwind` runs and restore them right after with DIP units -
  * zero `node_modules` patches required.
  */
 const MASON_PROPS = new Set([

@@ -1,5 +1,5 @@
 /**
- * Live DevTools bridge (`NativeDevTools`) for `@nativescript/effect-ui`.
+ * Live DevTools bridge (`NativeDevTools`) for `@nstudio/nativescript-effect-ui`.
  *
  * Uses `@effect/ui`'s built-in `MessageLog.makeEncoded` to encode Wire frames
  * off the app's hot update path, retains a bounded ring buffer for in-app or

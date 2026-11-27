@@ -13,17 +13,17 @@ import {
 import {
   makeHtmlCrashFallback,
   makeNativeCrashFallback,
-} from '@nativescript/effect-ui/crash';
-import { makeBridge, resolveDevToolsUrl } from '@nativescript/effect-ui/devtools';
+} from '@nstudio/nativescript-effect-ui/crash';
+import { makeBridge, resolveDevToolsUrl } from '@nstudio/nativescript-effect-ui/devtools';
 import {
   DismissKeyboard,
   KeyboardNativeLayer,
-} from '@nativescript/effect-ui/keyboard';
-import { ensureRuntimeGlobals, MasonHost } from '@nativescript/effect-ui/mason';
-import { NativeMotionLayer } from '@nativescript/effect-ui/motion';
-import { NativeHost } from '@nativescript/effect-ui/native';
-import { ClipboardNativeLayer, NativePlatformLayer } from '@nativescript/effect-ui/platform/native';
-import { Clipboard } from '@nativescript/effect-ui/platform';
+} from '@nstudio/nativescript-effect-ui/keyboard';
+import { ensureRuntimeGlobals, MasonHost } from '@nstudio/nativescript-effect-ui/mason';
+import { NativeMotionLayer } from '@nstudio/nativescript-effect-ui/motion';
+import { NativeHost } from '@nstudio/nativescript-effect-ui/native';
+import { ClipboardNativeLayer, NativePlatformLayer } from '@nstudio/nativescript-effect-ui/platform/native';
+import { Clipboard } from '@nstudio/nativescript-effect-ui/platform';
 import { PulseApp, SharedDomainLayer } from '@ns-effect-ui/shared';
 import { Scroll, View as MasonView } from '@triniwiz/nativescript-masonkit';
 import * as Effect from 'effect/Effect';
@@ -106,7 +106,10 @@ Application.run({
         }
 
         const sharedTab = new TabViewItem();
-        sharedTab.title = 'Effect Pulse';
+        sharedTab.title = 'Pulse';
+        if (typeof __APPLE__ !== 'undefined' && __APPLE__) {
+          sharedTab.iconSource = 'sys://waveform.path.ecg';
+        }
         sharedTab.view = masonRoot;
 
         // Tab 2: Native Lab showcasing UI-thread Motion, Native Sheet,
@@ -119,7 +122,10 @@ Application.run({
         nativeScroll.content = nativeContainer;
 
         const nativeTab = new TabViewItem();
-        nativeTab.title = 'Native Lab';
+        nativeTab.title = 'Lab';
+        if (typeof __APPLE__ !== 'undefined' && __APPLE__) {
+          nativeTab.iconSource = 'sys://slider.horizontal.3';
+        }
         nativeTab.view = nativeScroll as unknown as NSView;
 
         const tabView = new TabView();

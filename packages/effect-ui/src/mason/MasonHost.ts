@@ -2,14 +2,14 @@
  * `MasonHost`: an HTML-compatible NativeScript rendering host for `@effect/ui`,
  * powered by `@triniwiz/nativescript-masonkit`.
  *
- * Mounts unmodified `@effect/ui/html` components (`Html.component(...)`) — and
- * `@effect/ui-kit` headless components — directly onto native iOS & Android
+ * Mounts unmodified `@effect/ui/html` components (`Html.component(...)`): and
+ * `@effect/ui-kit` headless components: directly onto native iOS & Android
  * views with Rust/Taffy CSS Flexbox & Grid layout, native `<dialog>` modals,
  * controlled inputs, and `h.keepAlive` support.
  *
  * @example
  * ```ts
- * import { MasonHost } from "@nativescript/effect-ui/mason"
+ * import { MasonHost } from "@nstudio/nativescript-effect-ui/mason"
  * import { App } from "./App"
  *
  * MasonHost.run(App, {}, {

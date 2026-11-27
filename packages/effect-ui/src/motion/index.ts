@@ -1,5 +1,5 @@
 /**
- * UI-thread native motion for `@nativescript/effect-ui` — zero Reanimated,
+ * UI-thread native motion for `@nstudio/nativescript-effect-ui`: zero Reanimated,
  * zero worklets, zero third-party native animation plugins.
  *
  * - On **iOS**, animations commit directly to Apple's CoreAnimation render
@@ -67,7 +67,7 @@ export interface MotionDriverService {
  * CoreAnimation / Android RenderThread driver when not overridden in tests.
  */
 export class MotionDriver extends Context.Service<MotionDriver, MotionDriverService>()(
-  '@nativescript/effect-ui/MotionDriver',
+  '@nstudio/nativescript-effect-ui/MotionDriver',
 ) {}
 
 /**

@@ -1,5 +1,5 @@
 /**
- * Crash recovery boundary (`NativeCrash`) for `@nativescript/effect-ui`.
+ * Crash recovery boundary (`NativeCrash`) for `@nstudio/nativescript-effect-ui`.
  *
  * Provides:
  * - Clean `CrashReport` extraction from Effect `Cause`, `AsyncResult.Failure`,

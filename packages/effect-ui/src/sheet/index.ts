@@ -1,5 +1,5 @@
 /**
- * Native OS bottom sheets for `@nativescript/effect-ui` — zero plugins.
+ * Native OS bottom sheets for `@nstudio/nativescript-effect-ui`: zero plugins.
  *
  * - **iOS:** Configures real `UISheetPresentationController` (`medium` / `large`
  *   detents, native drag grabber, corner radius, interactive undimmed backdrop
@@ -170,7 +170,7 @@ export interface SheetServiceShape {
  * Injectable Effect service for imperative native sheet presentation & testing.
  */
 export class SheetService extends Context.Service<SheetService, SheetServiceShape>()(
-  '@nativescript/effect-ui/SheetService',
+  '@nstudio/nativescript-effect-ui/SheetService',
 ) {}
 
 export class OpenSheet extends Command.Service<OpenSheet>()('NativeSheet/Open', {

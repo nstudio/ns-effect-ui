@@ -1,5 +1,5 @@
 /**
- * Shared Effect Pulse application — ONE Effect UI `Html.component` + shared CSS
+ * Shared Effect Pulse application: ONE Effect UI `Html.component` + shared CSS
  * running identically on:
  *   1. Web (`BrowserHost`)
  *   2. iOS (`MasonHost` + MasonKit Rust/Taffy native views)
@@ -227,7 +227,7 @@ export const PulseApp = Html.component({
             h.p
               .class('ep-hero-subtitle text-sm')
               .children(
-                'One Effect UI component tree & shared Tailwind CSS — rendered natively with MasonKit on iOS/Android and BrowserHost on Web.',
+                'One Effect UI component tree and shared Tailwind CSS, rendered natively with MasonKit on iOS/Android and BrowserHost on Web.',
               ),
           ),
 

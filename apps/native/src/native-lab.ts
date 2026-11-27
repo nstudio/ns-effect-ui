@@ -2,12 +2,12 @@
  * Strategy A + Full Native Capabilities Lab:
  * Demonstrates all 6 zero-bridge pure-TypeScript NativeScript modules on top of
  * `@effect/ui`:
- * 1. `NativeMotion` — UI-thread CoreAnimation / Android RenderThread springs
- * 2. `NativeSheet` — iOS `UISheetPresentationController` / Android bottom sheet
- * 3. `VirtualList` — 1,000-row slot-recycled windowing (5 live native views)
- * 4. `NativeKeyboard` — live IME height/phase Subscription + DismissKeyboard Command
- * 5. `NativeDevTools` — live MessageLog Wire frame counter
- * 6. `NativeCrash` — drop-in recovery boundary wired in `main.ts`
+ * 1. `NativeMotion`: UI-thread CoreAnimation / Android RenderThread springs
+ * 2. `NativeSheet`: iOS `UISheetPresentationController` / Android bottom sheet
+ * 3. `VirtualList`: 1,000-row slot-recycled windowing (5 live native views)
+ * 4. `NativeKeyboard`: live IME height/phase Subscription + DismissKeyboard Command
+ * 5. `NativeDevTools`: live MessageLog Wire frame counter
+ * 6. `NativeCrash`: drop-in recovery boundary wired in `main.ts`
  */
 import { UiSchema } from '@effect/ui';
 import * as Command from '@effect/ui/Command';
@@ -16,11 +16,11 @@ import {
   DismissKeyboard,
   dockedComposerStyle,
   watchKeyboard,
-} from '@nativescript/effect-ui/keyboard';
-import * as VirtualList from '@nativescript/effect-ui/list';
-import { detectMotionBackend, track } from '@nativescript/effect-ui/motion';
-import { Native } from '@nativescript/effect-ui/native';
-import { presentNativeSheet } from '@nativescript/effect-ui/sheet';
+} from '@nstudio/nativescript-effect-ui/keyboard';
+import * as VirtualList from '@nstudio/nativescript-effect-ui/list';
+import { detectMotionBackend, track } from '@nstudio/nativescript-effect-ui/motion';
+import { Native } from '@nstudio/nativescript-effect-ui/native';
+import { presentNativeSheet } from '@nstudio/nativescript-effect-ui/sheet';
 import { Application, Button, Frame, Label, StackLayout, type View as NSView } from '@nativescript/core';
 import { TriggerHaptic } from '@ns-effect-ui/shared';
 import * as Effect from 'effect/Effect';
@@ -63,7 +63,7 @@ const OpenDetentSheet = Command.make('NativeLab/openDetentSheet', {}, () =>
 
     const body = new Label();
     body.text =
-      'Presented directly via UISheetPresentationController (medium & large detents, grabber, Liquid Glass on iOS 26+) and bottom-docked sheet window on Android — zero native plugins.';
+      'Presented directly via UISheetPresentationController (medium & large detents, grabber, Liquid Glass on iOS 26+) and bottom-docked sheet window on Android, with zero native plugins.';
     body.textWrap = true;
     body.className = 'native-lab-subtitle';
     sheetRoot.addChild(body as unknown as NSView);
@@ -220,7 +220,9 @@ export const NativeControlLab = Native.component({
           .style({
             height: 56,
             borderRadius: 12,
-            backgroundColor: '#ebe5d8',
+            backgroundColor: '#f4f4f5',
+            borderWidth: 1,
+            borderColor: '#e4e4e7',
             padding: 8,
             marginBottom: 10,
           })
@@ -242,7 +244,7 @@ export const NativeControlLab = Native.component({
                 width: 96,
                 height: 40,
                 borderRadius: 10,
-                backgroundColor: '#1f6f63',
+                backgroundColor: '#09090b',
                 horizontalAlignment: 'left',
               })
               .children(
@@ -328,11 +330,11 @@ export const NativeControlLab = Native.component({
               h.label
                 .col(0)
                 .text(entry.item.label)
-                .style({ fontSize: 14, fontWeight: '600', color: '#1b1d1b' }),
+                .style({ fontSize: 14, fontWeight: '600', color: '#09090b' }),
               h.label
                 .col(1)
                 .text(`slot ${entry.slot} · ${entry.item.tag}`)
-                .style({ fontSize: 12, color: '#1f6f63', fontWeight: '600' }),
+                .style({ fontSize: 12, color: '#52525b', fontWeight: '600' }),
             ),
         ),
       ),
