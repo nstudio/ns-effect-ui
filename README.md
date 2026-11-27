@@ -124,6 +124,42 @@ Because **both NativeScript and MasonKit target far more than iOS and Android** 
 
 ---
 
+## Comparison: `@nativescript/effect-ui` vs. `foldkit-native`
+
+[`goetzrobin/foldkit-native`](https://github.com/goetzrobin/foldkit-native) (specifically its `packages/effect-ui-native` package) is another pioneering community exploration running Effect UI on native mobile views without React's reconciler. Comparing the two architectures side by side clarifies the trade-offs and where NativeScript + MasonKit excels.
+
+### Architectural Comparison
+
+| Dimension | `@nativescript/effect-ui` (NativeScript + MasonKit) | `foldkit-native` (`@ng-native/fabric` + RN Fabric / Expo) |
+|---|---|---|
+| **Rendering Stack** | **NativeScript 9.1 + MasonKit (Rust / Taffy)** directly hosting UIKit, Android Views, and Desktop views. Zero React, zero Metro, zero Expo. | **React Native Fabric (C++ / Yoga)** accessed via `@ng-native/fabric` inside an Expo / Metro app (bypasses React's reconciler, still ships `react`, `react-native`, `expo`). |
+| **View Portability (Web ↔ Native)** | **Both Strategy B & Strategy A:** `MasonHost` runs unmodified `Html.component(...)` markup and `@effect/ui-kit` headless components across Web, iOS, and Android — *plus* `NativeHost` for NativeScript widgets. | **Strategy A only:** Custom RN-shaped vocabulary (`h.view`, `h.text`, `h.pressable`, `h.scrollView`). Shared domain logic only; views and `@effect/ui-kit` components must be rewritten for native. |
+| **Layout & CSS Engine** | **Rust / Taffy** — real **CSS Grid** (`grid-cols-*`, `gap-*`), Flexbox, block/inline flow, standard Tailwind v4, and `<dialog>` → native `showModal()`. | **Yoga** — Flexbox-only (no CSS Grid), text must be wrapped in `h.text(...)`, RN style objects + `@ng-native/fabric` CSS subset. |
+| **Native OS API Access** | **100% direct from TypeScript** with generated native `.d.ts` typings (`UIImpactFeedbackGenerator`, `VibrationEffect`, `CoreLocation`, `SceneKit`, etc.). Zero native wrapper plugins or bridge serialization. | **Requires Expo / RN native modules** (`expo-haptics`, `expo-clipboard`, `expo-audio`, etc.). Custom native views require authoring Swift + Kotlin Expo Modules, podspec/gradle files, and manual prop/event bindings + full native rebuilds. |
+| **Bundler & JS Engine** | **Vite (`@nativescript/vite`) + V8** (fast standard Vite pipeline, ESM/HMR, full V8 runtime). | **Metro + Hermes** (requires Metro config workarounds for `#dev` / `production` conditions; no JIT on Hermes). |
+| **Platform Reach** | **Web + iOS + Android + macOS + Windows + Linux + visionOS** (NativeScript & MasonKit ship mobile and desktop backends). | **iOS + Android only** (mobile React Native / Expo). |
+| **Live Verification Today** | Verified running live on **Web**, **iOS 27 Simulator**, and **Android 16 Emulator**, plus Node Vitest `Play` tests. | Extensive simulated-phone suite (284 `NativeTest` tests); README notes `eui-playground` has not yet been run on a phone or on Android. |
+
+### Where `foldkit-native` Excels Today (Fair Credit)
+
+`foldkit-native` has invested deeply in mobile app ergonomics and already prototypes several high-value patterns on top of Effect UI:
+
+- **UI-thread worklet motion (`Motion.animate`):** Integrates `react-native-worklets` + Reanimated so spring and enter/exit animations keep running on the UI thread even when JavaScript is blocked.
+- **Pre-built mobile & AI-chat modules:** Includes `VirtualList` (slot recycling), `AnchoredList` (chat transcript anchoring), `KeyboardBar`, native screen stacks (`react-native-screens`), bottom sheets, a `NativeCrash` recovery screen, and a `NativeDevTools` bridge to `@effect/ui-devtools`.
+- **RN / Expo view ecosystem reuse:** Apps already depending on specific React Native native views (e.g., `react-native-enriched-markdown`, `expo-audio`, or `@shopify/react-native-skia`) can mount them through `@ng-native/fabric`.
+
+### Where NativeScript + MasonKit Has a Decisive Structural Advantage
+
+While `foldkit-native` is ahead on a few pre-packaged chat/list helper modules today, the underlying **NativeScript + MasonKit** foundation solves harder structural constraints that cannot easily be retrofitted onto React Native Fabric:
+
+1. **Write views once — not just reducers:** With `MasonHost`, your `Html.component(...)` views, Tailwind v4 CSS Grid layouts, `<dialog>` modals, `Head.title`, and `@effect/ui-kit` headless components run natively on iOS and Android without maintaining separate web and mobile view layers.
+2. **Zero native bridge tax:** Calling any new iOS, Android, macOS, Windows, or Linux OS API from an Effect `Layer` is plain TypeScript — no C++ JSI/TurboModule specs, no duplicated Swift + Kotlin Expo Module glue, and no 15-minute native rebuilds just to expose another platform method.
+3. **Cleaner runtime with no React/Expo coupling:** Running directly on NativeScript 9.1 + Vite avoids carrying `react`, `react-native`, Metro, Expo prebuild, and `@ng-native/fabric` as intermediate layers just to render native views.
+4. **Mobile *and* Desktop from one host:** Because both NativeScript and MasonKit target macOS, Windows, and Linux alongside iOS and Android, the same Effect UI host scales naturally beyond phones to native desktop apps.
+5. **Every mobile ergonomic is directly buildable in pure TypeScript:** Virtualized recycled lists (`ListView` / `CollectionView`), native CoreAnimation / Android Animator UI-thread transitions, iOS `UISheetPresentationController` bottom sheets, keyboard-docked composers (`@nativescript/input-accessory`), and `@effect/ui-devtools` bridges are all directly reachable from TypeScript on NativeScript — without any Swift/Kotlin bridge layer.
+
+---
+
 ## Workspace Layout
 
 ```text
