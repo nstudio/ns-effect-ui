@@ -5,7 +5,7 @@
  * (column flex, row flex with `flex-1` / `space-between` / `flex-end`, and
  * equal-column CSS Grid) so AppKit `NSView` frames match Web & MasonKit.
  */
-import type { ComputedBoxStyle } from './styles.ts';
+import type { ComputedBoxStyle } from './styles.js';
 
 export interface Rect {
   readonly x: number;

@@ -1,4 +1,4 @@
-export * as MasonHost from './MasonHost.ts';
+export * as MasonHost from './MasonHost.js';
 export {
   createContainerNode,
   createMasonElement,
@@ -12,7 +12,7 @@ export {
   type MasonContainer,
   type MasonNode,
   type MasonTextNode,
-} from './elements.ts';
-export { createDialogPresenter, type DialogPresenter } from './dialog.ts';
-export { applyAttr, applyNonControlledProp, parseInlineStyle } from './styles.ts';
-export { ensureRuntimeGlobals } from './services.ts';
+} from './elements.js';
+export { createDialogPresenter, type DialogPresenter } from './dialog.js';
+export { applyAttr, applyNonControlledProp, parseInlineStyle } from './styles.js';
+export { ensureRuntimeGlobals } from './services.js';

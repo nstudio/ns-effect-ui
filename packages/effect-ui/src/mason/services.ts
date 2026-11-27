@@ -8,7 +8,7 @@
 import { Html, HtmlSubscription } from '@effect/ui/html';
 import { Application, Screen, type View as NSView } from '@nativescript/core';
 import type * as Context from 'effect/Context';
-import type { EventController } from './events.ts';
+import type { EventController } from './events.js';
 
 /**
  * Ensures lightweight standard JS runtime helpers expected by `@effect/ui`

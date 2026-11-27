@@ -9,7 +9,7 @@ import type * as Context from 'effect/Context';
 import * as Effect from 'effect/Effect';
 import * as Option from 'effect/Option';
 import * as Schema from 'effect/Schema';
-import * as Native from './Native.ts';
+import * as Native from './Native.js';
 
 export interface Found {
   readonly found: boolean;

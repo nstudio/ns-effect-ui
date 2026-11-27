@@ -15,14 +15,14 @@ import * as Context from 'effect/Context';
 import * as Effect from 'effect/Effect';
 import * as Layer from 'effect/Layer';
 import type * as AsyncResult from 'effect/reactivity/AsyncResult';
-import { layoutTree, measureNode, type LayoutNode, type Rect } from './layout.ts';
+import { layoutTree, measureNode, type LayoutNode, type Rect } from './layout.js';
 import {
   type ComputedBoxStyle,
   darkPalette,
   lightPalette,
   resolveMacosStyle,
   type RgbaColor,
-} from './styles.ts';
+} from './styles.js';
 
 export type MacosRoot<V> = [Renderer.HostOf<V>] extends [Html.Host]
   ? unknown

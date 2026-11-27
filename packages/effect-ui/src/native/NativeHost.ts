@@ -35,8 +35,8 @@ import * as Effect from 'effect/Effect';
 import * as Layer from 'effect/Layer';
 import type * as AsyncResult from 'effect/reactivity/AsyncResult';
 import type * as Scope from 'effect/Scope';
-import { ensureRuntimeGlobals } from '../mason/services.ts';
-import * as Native from './Native.ts';
+import { ensureRuntimeGlobals } from '../mason/services.js';
+import * as Native from './Native.js';
 
 export type NativeRoot<V> = [Renderer.HostOf<V>] extends [Native.Host]
   ? unknown

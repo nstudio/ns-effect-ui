@@ -3,8 +3,8 @@
  * `MasonHost` in Node (Vitest) without an iOS/Android runtime.
  */
 import type { View as NSView } from '@nativescript/core';
-import type { DialogPresenter } from '../mason/dialog.ts';
-import { setTagName } from '../mason/elements.ts';
+import type { DialogPresenter } from '../mason/dialog.js';
+import { setTagName } from '../mason/elements.js';
 
 type Listener = (event?: Record<string, unknown>) => void;
 

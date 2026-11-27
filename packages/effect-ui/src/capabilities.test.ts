@@ -43,35 +43,35 @@ import * as Cause from 'effect/Cause';
 import * as Effect from 'effect/Effect';
 import * as Layer from 'effect/Layer';
 import * as Schema from 'effect/Schema';
-import { buildCrashReport, formatCrashText, makeHtmlCrashFallback } from './crash/index.ts';
+import { buildCrashReport, formatCrashText, makeHtmlCrashFallback } from './crash/index.js';
 import {
   type DevToolsWebSocketLike,
   makeBridge,
   resolveDevToolsUrl,
-} from './devtools/index.ts';
-import { layoutTree, type LayoutNode } from './macos/layout.ts';
-import { lightPalette, resolveMacosStyle } from './macos/styles.ts';
+} from './devtools/index.js';
+import { layoutTree, type LayoutNode } from './macos/layout.js';
+import { lightPalette, resolveMacosStyle } from './macos/styles.js';
 import {
   DismissKeyboard,
   dockedComposerStyle,
   makeTestKeyboardLayer,
   watchKeyboard,
-} from './keyboard/index.ts';
-import * as VirtualList from './list/index.ts';
-import { MasonHost } from './mason/index.ts';
-import { animateTo, makeTestMotionLayer, track } from './motion/index.ts';
+} from './keyboard/index.js';
+import * as VirtualList from './list/index.js';
+import { MasonHost } from './mason/index.js';
+import { animateTo, makeTestMotionLayer, track } from './motion/index.js';
 import {
   CloseSheet,
   makeTestSheetLayer,
   OpenSheet,
   parseSheetOptionsFromAttributes,
-} from './sheet/index.ts';
+} from './sheet/index.js';
 import {
   createMockDialogPresenter,
   createMockMasonView,
   findViews,
   textContentOf,
-} from './testing/MockMasonHost.ts';
+} from './testing/MockMasonHost.js';
 
 function mockHostOptions() {
   return {

@@ -1,1 +1,1 @@
-export * from './platform/index.ts';
+export * from './platform/index.js';

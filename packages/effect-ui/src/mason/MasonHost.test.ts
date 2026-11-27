@@ -42,13 +42,13 @@ import { Switch } from '@effect/ui-kit';
 import type { View as NSView } from '@nativescript/core';
 import * as Effect from 'effect/Effect';
 import * as Schema from 'effect/Schema';
-import { MasonHost } from './index.ts';
+import { MasonHost } from './index.js';
 import {
   createMockDialogPresenter,
   createMockMasonView,
   findViews,
   textContentOf,
-} from '../testing/MockMasonHost.ts';
+} from '../testing/MockMasonHost.js';
 
 const flushMicrotasks = () => new Promise((resolve) => setTimeout(resolve, 10));
 

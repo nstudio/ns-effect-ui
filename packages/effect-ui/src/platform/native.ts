@@ -12,7 +12,7 @@ import {
   DeviceInfo,
   Haptics,
   type HapticStyle,
-} from './index.ts';
+} from './index.js';
 
 // Lazily instantiated iOS feedback generators (reused across calls).
 let iosSelection: UISelectionFeedbackGenerator | null = null;

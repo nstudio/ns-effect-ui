@@ -13,7 +13,7 @@ import {
   configureAndroidSheetWindow,
   configureIOSSheetController,
   parseSheetOptionsFromAttributes,
-} from '../sheet/index.ts';
+} from '../sheet/index.js';
 
 const IOS_OVER_FULL_SCREEN = 5;
 const IOS_PAGE_SHEET = 1;

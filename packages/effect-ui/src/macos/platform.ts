@@ -14,7 +14,7 @@ import {
   DeviceInfo,
   Haptics,
   type HapticStyle,
-} from '../platform/index.ts';
+} from '../platform/index.js';
 
 function macosGlobal<T = any>(name: string): T | undefined {
   return (globalThis as unknown as Record<string, T | undefined>)[name];

@@ -3,8 +3,33 @@
   "version": "0.1.0",
   "type": "module",
   "license": "MIT",
-  "description": "NativeScript & MasonKit hosts, native vocabulary, and platform Effect services for @effect/ui",
+  "description": "NativeScript & macOS AppKit hosts, native vocabulary, and platform Effect services for @effect/ui",
+  "keywords": [
+    "effect",
+    "effect-ui",
+    "nativescript",
+    "masonkit",
+    "ios",
+    "android",
+    "macos",
+    "appkit",
+    "native"
+  ],
+  "homepage": "https://github.com/nstudio/ns-effect-ui#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nstudio/ns-effect-ui.git",
+    "directory": "packages/effect-ui"
+  },
+  "bugs": {
+    "url": "https://github.com/nstudio/ns-effect-ui/issues"
+  },
   "sideEffects": false,
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     ".": "./src/index.ts",
     "./mason": "./src/mason/index.ts",
@@ -20,14 +45,71 @@
     "./devtools": "./src/devtools/index.ts",
     "./testing": "./src/testing/index.ts"
   },
-  "scripts": {
-    "check": "tsc --noEmit"
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/index.js"
+      },
+      "./mason": {
+        "types": "./dist/mason/index.d.ts",
+        "import": "./dist/mason/index.js"
+      },
+      "./macos": {
+        "types": "./dist/macos/index.d.ts",
+        "import": "./dist/macos/index.js"
+      },
+      "./native": {
+        "types": "./dist/native/index.d.ts",
+        "import": "./dist/native/index.js"
+      },
+      "./platform": {
+        "types": "./dist/platform/index.d.ts",
+        "import": "./dist/platform/index.js"
+      },
+      "./platform/native": {
+        "types": "./dist/platform/native.d.ts",
+        "import": "./dist/platform/native.js"
+      },
+      "./motion": {
+        "types": "./dist/motion/index.d.ts",
+        "import": "./dist/motion/index.js"
+      },
+      "./sheet": {
+        "types": "./dist/sheet/index.d.ts",
+        "import": "./dist/sheet/index.js"
+      },
+      "./list": {
+        "types": "./dist/list/index.d.ts",
+        "import": "./dist/list/index.js"
+      },
+      "./keyboard": {
+        "types": "./dist/keyboard/index.d.ts",
+        "import": "./dist/keyboard/index.js"
+      },
+      "./crash": {
+        "types": "./dist/crash/index.d.ts",
+        "import": "./dist/crash/index.js"
+      },
+      "./devtools": {
+        "types": "./dist/devtools/index.d.ts",
+        "import": "./dist/devtools/index.js"
+      },
+      "./testing": {
+        "types": "./dist/testing/index.d.ts",
+        "import": "./dist/testing/index.js"
+      }
+    }
   },
-  "dependencies": {
-    "@effect/ui": "https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2",
-    "effect": "^4.1.6"
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "check": "tsc --noEmit",
+    "prepack": "pnpm run build"
   },
   "peerDependencies": {
+    "@effect/ui": "*",
+    "effect": "^4.0.0",
     "@nativescript/core": "^9.1.0",
     "@nativescript/macos-node-api": "^0.4.0 || ^0.5.0-beta.0",
     "@triniwiz/nativescript-masonkit": "^1.0.0-beta.133"
@@ -44,8 +126,10 @@
     }
   },
   "devDependencies": {
+    "@effect/ui": "https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2",
     "@nativescript/core": "~9.1.3",
     "@nativescript/types": "~9.1.0",
-    "@triniwiz/nativescript-masonkit": "1.0.0-beta.135"
+    "@triniwiz/nativescript-masonkit": "1.0.0-beta.135",
+    "effect": "^4.1.6"
   }
 }

@@ -134,13 +134,13 @@ importers:
 
   packages/effect-ui:
     dependencies:
+      '@nativescript/macos-node-api':
+        specifier: ^0.4.0 || ^0.5.0-beta.0
+        version: 0.5.0-beta.0
+    devDependencies:
       '@effect/ui':
         specifier: https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2
         version: https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2(effect@4.1.6)
-      effect:
-        specifier: ^4.1.6
-        version: 4.1.6
-    devDependencies:
       '@nativescript/core':
         specifier: ~9.1.3
         version: 9.1.4
@@ -150,6 +150,9 @@ importers:
       '@triniwiz/nativescript-masonkit':
         specifier: 1.0.0-beta.135
         version: 1.0.0-beta.135
+      effect:
+        specifier: ^4.1.6
+        version: 4.1.6
 
   packages/shared-app:
     dependencies:

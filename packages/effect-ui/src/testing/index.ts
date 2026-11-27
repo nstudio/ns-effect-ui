@@ -1,1 +1,1 @@
-export * from './MockMasonHost.ts';
+export * from './MockMasonHost.js';

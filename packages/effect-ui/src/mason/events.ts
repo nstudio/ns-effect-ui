@@ -13,7 +13,7 @@
 import type * as Renderer from '@effect/ui/Renderer';
 import type * as View from '@effect/ui/View';
 import type { View as NSView } from '@nativescript/core';
-import { getTagName, isViewNode, type MasonNode } from './elements.ts';
+import { getTagName, isViewNode, type MasonNode } from './elements.js';
 
 export interface EventEntry {
   handlers: Readonly<Record<string, View.Handler<unknown, any>>>;

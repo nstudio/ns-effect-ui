@@ -29,7 +29,7 @@ import * as Effect from 'effect/Effect';
 import * as Layer from 'effect/Layer';
 import type * as AsyncResult from 'effect/reactivity/AsyncResult';
 import type * as Scope from 'effect/Scope';
-import { createDialogPresenter, type DialogPresenter } from './dialog.ts';
+import { createDialogPresenter, type DialogPresenter } from './dialog.js';
 import {
   createContainerNode,
   createMasonElement,
@@ -40,16 +40,16 @@ import {
   isTextNode,
   isViewNode,
   type MasonNode,
-} from './elements.ts';
-import { createEventController, type EventController } from './events.ts';
+} from './elements.js';
+import { createEventController, type EventController } from './events.js';
 import {
   ensureRuntimeGlobals,
   makeNativeAnimationFrames,
   makeNativeGlobalEvents,
   makeNativeHtmlHost,
   makeNativeMediaQueries,
-} from './services.ts';
-import { applyAttr, applyNonControlledProp } from './styles.ts';
+} from './services.js';
+import { applyAttr, applyNonControlledProp } from './styles.js';
 
 /**
  * Passes when a root renders HTML or is host-neutral, matching `BrowserHost.HtmlRoot`.
