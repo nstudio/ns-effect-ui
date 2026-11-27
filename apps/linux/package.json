@@ -1,0 +1,21 @@
+{
+  "name": "@ns-effect-ui/linux",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/main.ts",
+    "start:node": "node src/main.ts",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@effect/ui": "https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2",
+    "@effect/ui-kit": "https://pkg.pr.new/Effect-TS/ui/@effect/ui-kit@5cb34b2",
+    "@ns-effect-ui/shared": "workspace:*",
+    "@nstudio/nativescript-effect-ui": "workspace:*",
+    "effect": "^4.1.6"
+  },
+  "optionalDependencies": {
+    "@nativescript/linux-napi": "0.1.0-alpha.8"
+  }
+}

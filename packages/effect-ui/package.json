@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "license": "MIT",
-  "description": "NativeScript & macOS AppKit hosts, native vocabulary, and platform Effect services for @effect/ui",
+  "description": "NativeScript hosts for iOS, Android, macOS, Windows, and Linux plus platform Effect services for @effect/ui",
   "keywords": [
     "effect",
     "effect-ui",
@@ -13,6 +13,11 @@
     "android",
     "macos",
     "appkit",
+    "windows",
+    "winui",
+    "winrt",
+    "linux",
+    "gtk4",
     "native"
   ],
   "homepage": "https://github.com/nstudio/ns-effect-ui#readme",
@@ -34,6 +39,8 @@
     ".": "./src/index.ts",
     "./mason": "./src/mason/index.ts",
     "./macos": "./src/macos/index.ts",
+    "./windows": "./src/windows/index.ts",
+    "./linux": "./src/linux/index.ts",
     "./native": "./src/native/index.ts",
     "./platform": "./src/platform/index.ts",
     "./platform/native": "./src/platform/native.ts",
@@ -59,6 +66,14 @@
       "./macos": {
         "types": "./dist/macos/index.d.ts",
         "import": "./dist/macos/index.js"
+      },
+      "./windows": {
+        "types": "./dist/windows/index.d.ts",
+        "import": "./dist/windows/index.js"
+      },
+      "./linux": {
+        "types": "./dist/linux/index.d.ts",
+        "import": "./dist/linux/index.js"
       },
       "./native": {
         "types": "./dist/native/index.d.ts",
@@ -112,6 +127,10 @@
     "effect": "^4.0.0",
     "@nativescript/core": "^9.1.0",
     "@nativescript/macos-node-api": "^0.4.0 || ^0.5.0-beta.0",
+    "@nativescript/windows": "^0.1.0-alpha.1 || ^1.0.0-beta.0",
+    "@nativescript/windows-napi": "^1.0.0-beta.0",
+    "@nativescript/linux": "^0.1.0-alpha.0",
+    "@nativescript/linux-napi": "^0.1.0-alpha.0",
     "@triniwiz/nativescript-masonkit": "^1.0.0-beta.133"
   },
   "peerDependenciesMeta": {
@@ -119,6 +138,18 @@
       "optional": true
     },
     "@nativescript/macos-node-api": {
+      "optional": true
+    },
+    "@nativescript/windows": {
+      "optional": true
+    },
+    "@nativescript/windows-napi": {
+      "optional": true
+    },
+    "@nativescript/linux": {
+      "optional": true
+    },
+    "@nativescript/linux-napi": {
       "optional": true
     },
     "@triniwiz/nativescript-masonkit": {

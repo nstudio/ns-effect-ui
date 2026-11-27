@@ -34,6 +34,28 @@ importers:
         specifier: ^4.0.8
         version: 4.1.12(@types/node@24.19.4)(happy-dom@21.0.4)(vite@8.4.0(@types/node@24.19.4)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.108.2))
 
+  apps/linux:
+    dependencies:
+      '@effect/ui':
+        specifier: https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2
+        version: https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2(effect@4.1.6)
+      '@effect/ui-kit':
+        specifier: https://pkg.pr.new/Effect-TS/ui/@effect/ui-kit@5cb34b2
+        version: https://pkg.pr.new/Effect-TS/ui/@effect/ui-kit@5cb34b2(@effect/ui@https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2(effect@4.1.6))(effect@4.1.6)
+      '@ns-effect-ui/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared-app
+      '@nstudio/nativescript-effect-ui':
+        specifier: workspace:*
+        version: link:../../packages/effect-ui
+      effect:
+        specifier: ^4.1.6
+        version: 4.1.6
+    optionalDependencies:
+      '@nativescript/linux-napi':
+        specifier: 0.1.0-alpha.8
+        version: 0.1.0-alpha.8
+
   apps/macos:
     dependencies:
       '@effect/ui':
@@ -132,11 +154,45 @@ importers:
         specifier: ^8.0.0
         version: 8.4.0(@types/node@24.19.4)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.108.2)
 
+  apps/windows:
+    dependencies:
+      '@effect/ui':
+        specifier: https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2
+        version: https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2(effect@4.1.6)
+      '@effect/ui-kit':
+        specifier: https://pkg.pr.new/Effect-TS/ui/@effect/ui-kit@5cb34b2
+        version: https://pkg.pr.new/Effect-TS/ui/@effect/ui-kit@5cb34b2(@effect/ui@https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2(effect@4.1.6))(effect@4.1.6)
+      '@ns-effect-ui/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared-app
+      '@nstudio/nativescript-effect-ui':
+        specifier: workspace:*
+        version: link:../../packages/effect-ui
+      effect:
+        specifier: ^4.1.6
+        version: 4.1.6
+    optionalDependencies:
+      '@nativescript/windows-napi':
+        specifier: 1.0.0-beta.28
+        version: 1.0.0-beta.28
+
   packages/effect-ui:
     dependencies:
+      '@nativescript/linux':
+        specifier: ^0.1.0-alpha.0
+        version: 0.1.0-alpha.8
+      '@nativescript/linux-napi':
+        specifier: ^0.1.0-alpha.0
+        version: 0.1.0-alpha.8
       '@nativescript/macos-node-api':
         specifier: ^0.4.0 || ^0.5.0-beta.0
         version: 0.5.0-beta.0
+      '@nativescript/windows':
+        specifier: ^0.1.0-alpha.1 || ^1.0.0-beta.0
+        version: 0.1.0-alpha.1
+      '@nativescript/windows-napi':
+        specifier: ^1.0.0-beta.0
+        version: 1.0.0-beta.28
     devDependencies:
       '@effect/ui':
         specifier: https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2
@@ -807,6 +863,13 @@ packages:
   '@nativescript/ios@9.1.1':
     resolution: {integrity: sha512-xgSo3sRJinexjcbcKUz7N+Wz6M53+mf8oQaTvekPWVeHG0E8WvS9S7cnkU7IYzTpyBwR5h6z9m7RfTYv9iAvOw==}
 
+  '@nativescript/linux-napi@0.1.0-alpha.8':
+    resolution: {integrity: sha512-q9xQnKPLBCOP7SnuVGf4ncBACaLRVusRCaEtwMW4OfCpKkocW6sDIpoxkCe2pAHbSAry2nhrfFbAAZdwh8KjKA==}
+    engines: {node: '>= 18'}
+
+  '@nativescript/linux@0.1.0-alpha.8':
+    resolution: {integrity: sha512-OvlG/lzK4+L6bGZNtrOL60TGd6cQO75QQ/680ubBrEH+g7yohNSNTld0HDHLwEkQvvAi0EtSyrwsdl10+XE6yg==}
+
   '@nativescript/macos-node-api@0.5.0-beta.0':
     resolution: {integrity: sha512-feYWtaGO50IfEkqoqWhpsxs2ZvoBCWg5yRKoYjCgPXHWQ/W1Sjb7ack7opq7A4sxv5Z1h1Qfr/Q1UyYIUmg6Kg==}
 
@@ -859,6 +922,14 @@ packages:
         optional: true
       vue-tsc:
         optional: true
+
+  '@nativescript/windows-napi@1.0.0-beta.28':
+    resolution: {integrity: sha512-Dg7xXodJVdyLf7FXNhWBOFFLt6Cjt0P+vinifgo2gPkpFYtAdM61I6B5rys+NAX0ypi4z6Kn88kznnRlrpmeLw==}
+    engines: {node: '>= 18'}
+    os: [win32]
+
+  '@nativescript/windows@0.1.0-alpha.1':
+    resolution: {integrity: sha512-7h7yHCWeDd1k+ZyhD23GYDpennSk1GKsNtoSKY3QuJXbGPdfWkuYUdg5PzYzIdkc9rKStRl6OpdWUWfn6N9apw==}
 
   '@oxc-project/types@0.160.0':
     resolution: {integrity: sha512-gw4k9syEmnckbOgw2A2FU1TBDdX9hfwV9jEn/uio65pguPzwWiXQS3OIJDMEhv9m06tj9XiEe6RoD0YA+LgreA==}
@@ -2657,6 +2728,10 @@ snapshots:
 
   '@nativescript/ios@9.1.1': {}
 
+  '@nativescript/linux-napi@0.1.0-alpha.8': {}
+
+  '@nativescript/linux@0.1.0-alpha.8': {}
+
   '@nativescript/macos-node-api@0.5.0-beta.0':
     dependencies:
       '@nativescript/objc-node-api': 1.0.0-alpha.7
@@ -2717,6 +2792,10 @@ snapshots:
       - tsx
       - utf-8-validate
       - yaml
+
+  '@nativescript/windows-napi@1.0.0-beta.28': {}
+
+  '@nativescript/windows@0.1.0-alpha.1': {}
 
   '@oxc-project/types@0.160.0': {}
 

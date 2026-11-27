@@ -6,6 +6,8 @@
   "scripts": {
     "ios": "ns run ios --no-hmr",
     "android": "ns run android --no-hmr",
+    "windows": "ns run windows --no-hmr",
+    "linux": "ns run linux --no-hmr",
     "check": "tsc --noEmit"
   },
   "dependencies": {

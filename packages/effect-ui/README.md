@@ -1,8 +1,8 @@
 # @nstudio/nativescript-effect-ui
 
-NativeScript and macOS AppKit rendering hosts, platform Effect Layers, and pure-TypeScript native primitives for [`@effect/ui`](https://github.com/Effect-TS/ui).
+NativeScript rendering hosts for iOS, Android, macOS, Windows, and Linux, platform Effect Layers, and pure-TypeScript native primitives for [`@effect/ui`](https://github.com/Effect-TS/ui).
 
-Mount standard `@effect/ui/html` (`Html.component`) trees directly onto native iOS, Android, and macOS views with zero WebViews, or compose native UIKit/AppKit/Android views directly via `NativeHost`.
+Mount standard `@effect/ui/html` (`Html.component`) trees directly onto native iOS, Android, macOS (AppKit), Windows (WinUI 3 / WinRT), and Linux (GTK4) views with zero WebViews, or compose native views directly via `NativeHost`.
 
 ## Installation
 
@@ -18,14 +18,16 @@ npm install https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2
 
 Install the optional platform peer dependencies for the targets you use:
 
-- **iOS and Android (`MasonHost` / `NativeHost`)**: `@nativescript/core` and `@triniwiz/nativescript-masonkit`
+- **iOS, Android, Windows, and Linux (`MasonHost` / `NativeHost`)**: `@nativescript/core` and `@triniwiz/nativescript-masonkit` (plus `@nativescript/windows` or `@nativescript/linux` for desktop V8 runtimes)
 - **macOS Desktop (`MacosHost`)**: `@nativescript/macos-node-api`
+- **Windows Desktop (`WindowsHost`)**: `@nativescript/windows` or `@nativescript/windows-napi`
+- **Linux Desktop (`LinuxHost`)**: `@nativescript/linux` or `@nativescript/linux-napi`
 
 ## Quick Start
 
-### iOS and Android (`MasonHost`)
+### iOS, Android, Windows, and Linux (`MasonHost`)
 
-Mounts unmodified `@effect/ui/html` components onto native iOS and Android views backed by MasonKit's Rust/Taffy CSS Flexbox and Grid layout engine.
+Mounts unmodified `@effect/ui/html` components onto native views backed by MasonKit's Rust/Taffy CSS Flexbox and Grid layout engine.
 
 ```ts
 import { MasonHost } from '@nstudio/nativescript-effect-ui/mason';
@@ -38,32 +40,36 @@ MasonHost.run(App, {}, {
 });
 ```
 
-### macOS Desktop (`MacosHost`)
+### macOS, Windows, and Linux Desktop (`MacosHost` / `WindowsHost` / `LinuxHost`)
 
-Mounts the same `@effect/ui/html` components onto real AppKit views (`NSWindow`, `NSView`, `NSTextField`, `NSButton`, `NSScrollView`) with zero WebViews or Electron.
+Mount the exact same `@effect/ui/html` components onto native AppKit, WinUI/WinRT, or GTK4 windows with zero WebViews or Electron:
 
 ```ts
+// macOS (AppKit)
 import { MacosHost, MacosPlatformLayer } from '@nstudio/nativescript-effect-ui/macos';
-import { App } from './App';
+await MacosHost.run(App, {}, { title: 'Effect Pulse', width: 460, height: 820, layer: MacosPlatformLayer });
 
-await MacosHost.run(App, {}, {
-  title: 'Effect Pulse',
-  width: 460,
-  height: 820,
-  layer: MacosPlatformLayer,
-});
+// Windows (WinUI 3 / XAML Islands / WinRT Composition)
+import { WindowsHost, WindowsPlatformLayer } from '@nstudio/nativescript-effect-ui/windows';
+await WindowsHost.run(App, {}, { title: 'Effect Pulse', width: 460, height: 820, layer: WindowsPlatformLayer });
+
+// Linux (GTK4)
+import { LinuxHost, LinuxPlatformLayer } from '@nstudio/nativescript-effect-ui/linux';
+await LinuxHost.run(App, {}, { title: 'Effect Pulse', width: 460, height: 820, layer: LinuxPlatformLayer });
 ```
 
 ## Subpath Exports
 
 | Subpath | Description |
 | --- | --- |
-| `@nstudio/nativescript-effect-ui` | Platform service contracts (`Haptics`, `Share`, `Storage`, `DeviceInfo`, `PlatformAppearance`) |
-| `@nstudio/nativescript-effect-ui/mason` | `MasonHost` for standard `@effect/ui/html` on native iOS and Android |
+| `@nstudio/nativescript-effect-ui` | Platform service contracts (`Haptics`, `DeviceInfo`, `AppLifecycle`, `Clipboard`) |
+| `@nstudio/nativescript-effect-ui/mason` | `MasonHost` for standard `@effect/ui/html` on iOS, Android, Windows, and Linux |
 | `@nstudio/nativescript-effect-ui/macos` | `MacosHost` and `MacosPlatformLayer` for native macOS AppKit |
+| `@nstudio/nativescript-effect-ui/windows` | `WindowsHost` and `WindowsPlatformLayer` for native Windows (WinUI 3 / WinRT) |
+| `@nstudio/nativescript-effect-ui/linux` | `LinuxHost` and `LinuxPlatformLayer` for native Linux (GTK4) |
 | `@nstudio/nativescript-effect-ui/native` | `NativeHost`, `Native`, and `NativeCommand` for direct NativeScript view vocabularies |
 | `@nstudio/nativescript-effect-ui/platform` | Shared platform service interfaces and Web/fallback layers |
-| `@nstudio/nativescript-effect-ui/platform/native` | NativeScript `NativePlatformLayer` implementations for iOS and Android |
+| `@nstudio/nativescript-effect-ui/platform/native` | NativeScript `NativePlatformLayer` implementations for iOS, Android, Windows, and Linux |
 | `@nstudio/nativescript-effect-ui/motion` | UI-thread spring and timing motion (`UIViewPropertyAnimator` / Android `Animator`) |
 | `@nstudio/nativescript-effect-ui/sheet` | Native bottom sheets (`UISheetPresentationController` / Android `BottomSheetDialog`) |
 | `@nstudio/nativescript-effect-ui/list` | Virtualized recycled lists (`UITableView` / `RecyclerView`) |
@@ -74,7 +80,7 @@ await MacosHost.run(App, {}, {
 
 ## Examples and Documentation
 
-Full monorepo with shared Web, iOS, Android, and macOS apps: [github.com/nstudio/ns-effect-ui](https://github.com/nstudio/ns-effect-ui)
+Full monorepo with shared Web, iOS, Android, macOS, Windows, and Linux apps: [github.com/nstudio/ns-effect-ui](https://github.com/nstudio/ns-effect-ui)
 
 ## License
 

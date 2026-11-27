@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "description": "Host-agnostic Effect UI on NativeScript & MasonKit — one Effect UI application across Web, iOS, and Android",
+  "description": "Host-agnostic Effect UI on NativeScript across Web, iOS, Android, macOS, Windows, and Linux",
   "packageManager": "pnpm@10.33.4",
   "scripts": {
-    "check": "pnpm --filter @nstudio/nativescript-effect-ui check && pnpm --filter @ns-effect-ui/shared check && pnpm --filter @ns-effect-ui/web check && pnpm --filter @ns-effect-ui/native check && pnpm --filter @ns-effect-ui/macos check",
+    "check": "pnpm --filter @nstudio/nativescript-effect-ui check && pnpm --filter @ns-effect-ui/shared check && pnpm --filter @ns-effect-ui/web check && pnpm --filter @ns-effect-ui/native check && pnpm --filter @ns-effect-ui/macos check && pnpm --filter @ns-effect-ui/windows check && pnpm --filter @ns-effect-ui/linux check",
     "test": "vitest run",
     "test:watch": "vitest",
     "dev:web": "pnpm --filter @ns-effect-ui/web dev",
@@ -15,7 +15,9 @@
     "preview:web": "pnpm --filter @ns-effect-ui/web preview",
     "ios": "pnpm --filter @ns-effect-ui/native ios",
     "android": "pnpm --filter @ns-effect-ui/native android",
-    "macos": "pnpm --filter @ns-effect-ui/macos start"
+    "macos": "pnpm --filter @ns-effect-ui/macos start",
+    "windows": "pnpm --filter @ns-effect-ui/windows start",
+    "linux": "pnpm --filter @ns-effect-ui/linux start"
   },
   "dependencies": {
     "@effect/ui": "https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2",
