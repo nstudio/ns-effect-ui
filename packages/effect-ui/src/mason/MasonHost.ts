@@ -149,12 +149,21 @@ export function makeHost(
   };
 
   /**
-   * `<dialog>` nodes are tracked in the logical tree (so `parentOf`/`nextOf`
-   * remain exact for Effect UI reconciliation) but are presented via native
-   * `showModal` rather than attached inline into their parent's visual tree.
+   * `<dialog>` nodes (presented via native `showModal`) and `<input type="hidden">`
+   * nodes (non-rendered form data carriers) stay in the logical tree so
+   * `parentOf`/`nextOf` reconciliation and form field collection remain exact,
+   * while staying out of their parent's native visual tree.
    */
-  const isPortalElement = (node: MasonNode): boolean =>
-    isViewNode(node) && getTagName(node) === 'dialog';
+  const isNonVisualElement = (node: MasonNode): boolean => {
+    if (!isViewNode(node)) return false;
+    const tag = getTagName(node);
+    if (tag === 'dialog') return true;
+    if (tag === 'input') {
+      const type = (node as unknown as Record<string, unknown>)['type'];
+      return typeof type === 'string' && type.toLowerCase() === 'hidden';
+    }
+    return false;
+  };
 
   const findNextNativeSibling = (
     siblings: ReadonlyArray<MasonNode>,
@@ -162,7 +171,7 @@ export function makeHost(
   ): MasonNode | undefined => {
     for (let i = fromIndex; i < siblings.length; i++) {
       const candidate = siblings[i]!;
-      if (!isPortalElement(candidate) && !isContainer(candidate)) {
+      if (!isNonVisualElement(candidate) && !isContainer(candidate)) {
         return candidate;
       }
     }
@@ -247,8 +256,8 @@ export function makeHost(
     },
   );
 
-  const detachNative = (parent: MasonNode, child: MasonNode): void => {
-    if (isContainer(parent) || isPortalElement(child)) return;
+  const detachNativeChild = (parent: MasonNode, child: MasonNode): void => {
+    if (isContainer(parent)) return;
     const p = parent as MasonParentView;
     try {
       if (typeof p.removeChild === 'function') {
@@ -259,17 +268,38 @@ export function makeHost(
     }
   };
 
+  const detachNative = (parent: MasonNode, child: MasonNode): void => {
+    if (isNonVisualElement(child)) return;
+    detachNativeChild(parent, child);
+  };
+
   const attachNative = (
     parent: MasonNode,
     child: MasonNode,
     nativeRef: MasonNode | undefined,
   ): void => {
-    if (isContainer(parent) || isPortalElement(child)) return;
+    if (isContainer(parent) || isNonVisualElement(child)) return;
     const p = parent as MasonParentView;
     if (typeof p.insertBefore === 'function') {
       p.insertBefore(child, nativeRef ?? null);
     } else if (typeof p.addChild === 'function' && isViewNode(child)) {
       p.addChild(child);
+    }
+  };
+
+  const syncNonVisualAttachment = (node: NSView, wasNonVisual: boolean): void => {
+    const nowNonVisual = isNonVisualElement(node);
+    if (wasNonVisual === nowNonVisual) return;
+    const parent = parents.get(node);
+    if (parent === undefined) return;
+    if (nowNonVisual) {
+      detachNativeChild(parent, node);
+    } else {
+      const siblings = getChildren(parent);
+      const idx = siblings.indexOf(node);
+      if (idx >= 0) {
+        attachNative(parent, node, findNextNativeSibling(siblings, idx + 1));
+      }
     }
   };
 
@@ -327,7 +357,9 @@ export function makeHost(
 
     setAttr(node, name, value, previous) {
       if (!isViewNode(node)) return;
+      const wasNonVisual = isNonVisualElement(node);
       applyAttr(node, name, value, previous);
+      syncNonVisualAttachment(node, wasNonVisual);
     },
 
     setProp(node, name, value) {
@@ -354,7 +386,9 @@ export function makeHost(
         return;
       }
 
+      const wasNonVisual = isNonVisualElement(node);
       applyNonControlledProp(node, name, value);
+      syncNonVisualAttachment(node, wasNonVisual);
     },
 
     insertBefore(parent, node, ref) {
