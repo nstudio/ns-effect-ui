@@ -133,40 +133,25 @@ Because **both NativeScript and MasonKit target far more than iOS and Android** 
 
 ---
 
-## Comparison: `@nstudio/nativescript-effect-ui` vs. `foldkit-native`
+## Comparing Approaches: NativeScript vs. React Native Fabric
 
-[`goetzrobin/foldkit-native`](https://github.com/goetzrobin/foldkit-native) (specifically its `packages/effect-ui-native` package) is another pioneering community exploration running Effect UI on native mobile views without React's reconciler. Comparing the two architectures side by side clarifies the trade-offs and where NativeScript + MasonKit excels.
-
-### Architectural Comparison
+[`goetzrobin/foldkit-native`](https://github.com/goetzrobin/foldkit-native) (`packages/effect-ui-native`) is another thoughtful community exploration running Effect UI on native mobile views without React's reconciler, using `@ng-native/fabric` over React Native Fabric and Expo. For anyone curious how different native host architectures compare, here is a side-by-side overview of the two approaches:
 
 | Dimension | `@nstudio/nativescript-effect-ui` (NativeScript + MasonKit) | `foldkit-native` (`@ng-native/fabric` + RN Fabric / Expo) |
 |---|---|---|
-| **Rendering Stack** | **NativeScript 9.1 + MasonKit (Rust / Taffy)** directly hosting UIKit, Android Views, and Desktop views. Zero React, zero Metro, zero Expo. | **React Native Fabric (C++ / Yoga)** accessed via `@ng-native/fabric` inside an Expo / Metro app (bypasses React's reconciler, still ships `react`, `react-native`, `expo`). |
-| **View Portability (Web ↔ Native)** | **Both Strategy B & Strategy A:** `MasonHost` runs unmodified `Html.component(...)` markup and `@effect/ui-kit` headless components across Web, iOS, and Android — *plus* `NativeHost` for NativeScript widgets. | **Strategy A only:** Custom RN-shaped vocabulary (`h.view`, `h.text`, `h.pressable`, `h.scrollView`). Shared domain logic only; views and `@effect/ui-kit` components must be rewritten for native. |
-| **Layout & CSS Engine** | **Rust / Taffy** — real **CSS Grid** (`grid-cols-*`, `gap-*`), Flexbox, block/inline flow, standard Tailwind v4, and `<dialog>` → native `showModal()`. | **Yoga** — Flexbox-only (no CSS Grid), text must be wrapped in `h.text(...)`, RN style objects + `@ng-native/fabric` CSS subset. |
-| **Native OS API Access** | **100% direct from TypeScript** with generated native `.d.ts` typings (`UIImpactFeedbackGenerator`, `VibrationEffect`, `CoreLocation`, `SceneKit`, etc.). Zero native wrapper plugins or bridge serialization. | **Requires Expo / RN native modules** (`expo-haptics`, `expo-clipboard`, `expo-audio`, etc.). Custom native views require authoring Swift + Kotlin Expo Modules, podspec/gradle files, and manual prop/event bindings + full native rebuilds. |
-| **Bundler & JS Engine** | **Vite (`@nativescript/vite`) + V8** (fast standard Vite pipeline, ESM/HMR, full V8 runtime). | **Metro + Hermes** (requires Metro config workarounds for `#dev` / `production` conditions; no JIT on Hermes). |
-| **Platform Reach** | **Web + iOS + Android + macOS + Windows + Linux + visionOS** (NativeScript & MasonKit ship mobile and desktop backends). | **iOS + Android only** (mobile React Native / Expo). |
-| **UI-Thread Motion** | **Native CoreAnimation (iOS) + RenderThread `ViewPropertyAnimator` (Android)** directly from pure TS (`@nstudio/nativescript-effect-ui/motion`) — zero Reanimated/worklets. | **`Motion.animate`** via `react-native-worklets` + `react-native-reanimated` (requires native rebuild / dev build). |
-| **Bottom Sheets, Lists, Keyboard, Crash & DevTools** | **All shipped in pure TS with zero native plugins:** `@nstudio/nativescript-effect-ui/sheet` (`UISheetPresentationController` + Liquid Glass), `/list` (1,000-row recycled `VirtualList`), `/keyboard` (IME `Subscription` + docked composer), `/crash` (interactive recovery fallback), `/devtools` (`MessageLog` Wire WebSocket bridge). | Strong mobile prototypes (`VirtualList`, `AnchoredList`, `KeyboardBar`, `react-native-screens` stacks/sheets, `NativeCrash`, `NativeDevTools`), backed by Expo/RN native packages. |
-| **Live Verification Today** | Verified running live on **Web**, **iOS 27 Simulator**, **Android 16 Emulator**, and **native macOS 26 AppKit desktop** (`pnpm macos`, light & dark), plus 14 Vitest specs. | Extensive simulated-phone suite (284 `NativeTest` tests); README notes `eui-playground` has not yet been run on a phone or on Android. |
+| **Rendering Stack** | NativeScript + MasonKit (Rust/Taffy) hosting UIKit, Android Views, AppKit, WinUI/WinRT, and GTK4 directly. No React, Metro, or Expo runtime. | React Native Fabric (C++ / Yoga) driven through `@ng-native/fabric` inside an Expo / Metro app (skips React's reconciler while reusing RN Fabric views). |
+| **View Model (Web and Native)** | Supports both `MasonHost` (unmodified `Html.component(...)` markup and `@effect/ui-kit` headless components) and `NativeHost` (typed NativeScript widget vocabulary). | Uses a dedicated RN-shaped vocabulary (`h.view`, `h.text`, `h.pressable`, `h.scrollView`), keeping domain logic shared while authoring native views separately. |
+| **Layout & Styling** | Rust / Taffy supporting CSS Grid (`grid-cols-*`, `gap-*`), Flexbox, block/inline flow, standard Tailwind v4, and `<dialog>` mapped to native modals/sheets. | Yoga Flexbox layout with RN style objects and `@ng-native/fabric`'s CSS subset. |
+| **Native OS API Access** | Direct from TypeScript via generated native `.d.ts` typings (`UIImpactFeedbackGenerator`, `VibrationEffect`, `CoreLocation`, `SceneKit`, WinRT, GTK4) with no bridge modules. | Uses the Expo / React Native native module ecosystem (`expo-haptics`, `expo-clipboard`, `expo-audio`, or custom Swift/Kotlin Expo Modules). |
+| **Bundler & JS Engine** | Vite (`@nativescript/vite`) + V8 (mobile/desktop runtimes) or Node-API (Node/Bun/Deno on desktop). | Metro + Hermes. |
+| **Platform Reach** | Web, iOS, Android, macOS, Windows, and Linux. | iOS and Android (React Native / Expo). |
+| **UI-Thread Motion** | CoreAnimation (iOS) and `ViewPropertyAnimator` (Android) driven from TypeScript (`@nstudio/nativescript-effect-ui/motion`). | `Motion.animate` built on `react-native-worklets` and `react-native-reanimated`. |
+| **Native Mobile Primitives** | Pure-TypeScript subpaths for detent sheets (`/sheet`), recycled virtual lists (`/list`), IME keyboard subscriptions (`/keyboard`), crash recovery (`/crash`), and devtools Wire bridge (`/devtools`). | Includes mobile-focused primitives such as `VirtualList`, `AnchoredList` for streaming chat transcripts, `KeyboardBar`, `react-native-screens` navigation/sheets, `NativeCrash`, and `NativeDevTools`. |
 
-### Where `foldkit-native` Excels Today (Fair Credit)
+### Different Trade-offs
 
-`foldkit-native` has invested deeply in mobile chat ergonomics and already prototypes several specialized patterns on top of Effect UI:
-
-- **AI-chat transcript anchoring & streaming markdown:** Includes `AnchoredList` (chat scroll anchoring as replies stream), `react-native-enriched-markdown` integration, and an end-to-end `Effect Chat` port.
-- **Large simulated-phone test corpus:** 284 `NativeTest` unit tests exercising multi-screen chat flows and replay determinism.
-- **RN / Expo view ecosystem reuse:** Apps already depending on specific React Native native views (e.g., `react-native-enriched-markdown`, `expo-audio`, or `@shopify/react-native-skia`) can mount them through `@ng-native/fabric`.
-
-### Where NativeScript + MasonKit Has a Decisive Structural Advantage
-
-With UI-thread motion, native detent sheets, recycled 1,000-row virtualized lists, native keyboard subscriptions, crash recovery, and the `@effect/ui-devtools` Wire bridge all shipped in pure TypeScript inside `@nstudio/nativescript-effect-ui`, the architectural differences are stark:
-
-1. **Write views once — not just reducers:** With `MasonHost`, your `Html.component(...)` views, Tailwind v4 CSS Grid layouts, `<dialog>` modals/sheets, `Head.title`, and `@effect/ui-kit` headless components run natively on iOS and Android without maintaining separate web and mobile view layers.
-2. **Zero native bridge tax:** Every capability above — CoreAnimation springs, `UISheetPresentationController` detents + Liquid Glass, `NSNotificationCenter` / `WindowInsetsCompat` keyboard insets, haptics, and clipboard — is implemented in **pure TypeScript** with zero C++ JSI specs, zero duplicated Swift + Kotlin Expo Modules, and zero native rebuilds when calling new OS APIs.
-3. **Cleaner runtime with no React/Expo coupling:** Running directly on NativeScript 9.1 + Vite avoids carrying `react`, `react-native`, Metro, Expo prebuild, Reanimated/worklets, and `@ng-native/fabric` as intermediate layers just to render native views.
-4. **Mobile *and* Desktop from one host:** Because both NativeScript and MasonKit target macOS, Windows, and Linux alongside iOS and Android, the same Effect UI host scales naturally beyond phones to native desktop apps.
+- **Where `foldkit-native` (`@ng-native/fabric`) is a natural fit:** Apps already anchored in the Expo / React Native ecosystem that want to reuse specialized RN native views (such as `react-native-enriched-markdown`, `expo-audio`, or `@shopify/react-native-skia`), or mobile-focused teams adopting its `AnchoredList` streaming-chat patterns and simulated-phone test suite.
+- **Where `@nstudio/nativescript-effect-ui` is a natural fit:** Teams that want to share `Html.component(...)` views, Tailwind CSS Grid layouts, and `@effect/ui-kit` headless components directly across web and native, prefer calling OS SDKs straight from TypeScript without authoring Swift/Kotlin/C++ bridge modules, or want one Effect UI host architecture extending to macOS, Windows, and Linux alongside iOS and Android.
 
 ---
 
@@ -178,7 +163,10 @@ ns-effect-ui/
 │   ├── effect-ui/                # @nstudio/nativescript-effect-ui
 │   │   └── src/
 │   │       ├── mason/            # Strategy B: MasonHost, elements, styles, events, native <dialog>/sheet, services, tests
+│   │       ├── desktop/          # Shared desktop HTML services, color/text helpers for macOS, Windows, and Linux
 │   │       ├── macos/            # Native macOS AppKit host (MacosHost, MacosPlatformLayer, layout, monochrome styles)
+│   │       ├── windows/          # Native Windows host (WindowsHost for WinUI 3 / XAML Islands / Composition, WindowsPlatformLayer)
+│   │       ├── linux/            # Native Linux GTK4 host (LinuxHost, LinuxPlatformLayer)
 │   │       ├── native/           # Strategy A: Native.component vocabulary, NativeHost, NativeCommand
 │   │       ├── platform/         # Effect Services (Haptics, DeviceInfo, AppLifecycle, Clipboard) + Web/Native/Test Layers
 │   │       ├── motion/           # UI-thread CoreAnimation (iOS) & RenderThread ViewPropertyAnimator (Android)
@@ -188,11 +176,13 @@ ns-effect-ui/
 │   │       ├── crash/            # Interactive CrashReport & fallback recovery boundary for MasonHost / NativeHost
 │   │       ├── devtools/         # MessageLog Wire encoding & WebSocket bridge for @effect/ui-devtools
 │   │       └── testing/          # MockMasonHost for fast Node Vitest verification
-│   └── shared-app/               # @ns-effect-ui/shared ("Effect Pulse" — 100% shared app + CSS + Play tests)
+│   └── shared-app/               # @ns-effect-ui/shared ("Effect Pulse", 100% shared app + CSS + Play tests)
 └── apps/
     ├── web/                      # Vite 8 + Tailwind v4 web app (BrowserHost.mount)
-    ├── native/                   # NativeScript 9.1 + @nativescript/vite + MasonKit app (MasonHost + NativeHost tabs)
-    └── macos/                    # Native macOS AppKit desktop app (@nativescript/macos-node-api + MacosHost.run)
+    ├── native/                   # NativeScript 9.1 + @nativescript/vite + MasonKit app (iOS, Android, Windows, Linux)
+    ├── macos/                    # Native macOS AppKit desktop app (@nativescript/macos-node-api + MacosHost.run)
+    ├── windows/                  # Native Windows desktop app (@nativescript/windows / windows-napi + WindowsHost.run)
+    └── linux/                    # Native Linux GTK4 desktop app (@nativescript/linux / linux-napi + LinuxHost.run)
 ```
 
 ---
@@ -202,10 +192,10 @@ ns-effect-ui/
 ```bash
 pnpm install
 
-# Type-check all 4 workspaces (strict + exactOptionalPropertyTypes)
+# Type-check all 7 workspaces (strict + exactOptionalPropertyTypes)
 pnpm check
 
-# Run MasonHost unit tests + portable Effect UI Play tests in Node Vitest
+# Run host unit tests + portable Effect UI Play tests in Node Vitest (18 specs)
 pnpm test
 
 # Run the Web app (BrowserHost)
@@ -214,16 +204,14 @@ pnpm dev:web
 # Build the Web production bundle
 pnpm build:web
 
-# Run the NativeScript iOS app (MasonHost + NativeHost)
+# Run the NativeScript iOS / Android app (MasonHost + NativeHost)
 pnpm ios
-
-# Run the NativeScript Android app (MasonHost + NativeHost)
 pnpm android
 
-# Run the native macOS AppKit desktop app (MacosHost, zero Xcode build)
+# Run the native desktop apps (macOS AppKit, Windows WinUI/WinRT, Linux GTK4)
 pnpm macos
-# Or launch in macOS Dark Mode:
-pnpm macos -- --dark
+pnpm windows
+pnpm linux
 ```
 
 ---
