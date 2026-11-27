@@ -49,6 +49,8 @@ import {
   makeBridge,
   resolveDevToolsUrl,
 } from './devtools/index.ts';
+import { layoutTree, type LayoutNode } from './macos/layout.ts';
+import { lightPalette, resolveMacosStyle } from './macos/styles.ts';
 import {
   DismissKeyboard,
   dockedComposerStyle,
@@ -467,5 +469,45 @@ describe('NativeDevTools (MessageLog Wire encoding + WebSocket bridge)', () => {
         }).pipe(Effect.provide(bridge.layer)),
       ),
     );
+  });
+});
+
+describe('MacosHost (AppKit monochrome styles & CSS Grid/Flex layout engine)', () => {
+  it('resolves Tailwind + semantic monochrome classes and lays out a 3-column CSS Grid', () => {
+    const doneTitle = resolveMacosStyle(
+      'p',
+      'ep-task-title text-sm font-semibold text-foreground text-left',
+      { 'data-done': 'true' },
+      lightPalette.foreground,
+      false,
+    );
+    expect(doneTitle.strikethrough).toBe(true);
+    expect(doneTitle.color).toEqual(lightPalette.mutedForeground);
+
+    const gridStyle = resolveMacosStyle('section', 'grid grid-cols-3 gap-3', {}, lightPalette.foreground, false);
+    const cellStyle = resolveMacosStyle('div', 'flex flex-col gap-1 p-3 rounded-xl bg-card border border-border', {}, lightPalette.foreground, false);
+    const makeCell = (label: string): LayoutNode => ({
+      tag: 'div',
+      isPortal: false,
+      style: cellStyle,
+      text: label,
+      children: [],
+      frame: { x: 0, y: 0, width: 0, height: 0 },
+    });
+
+    const root: LayoutNode = {
+      tag: 'section',
+      isPortal: false,
+      style: gridStyle,
+      text: undefined,
+      children: [makeCell('Tasks'), makeCell('Done'), makeCell('Progress')],
+      frame: { x: 0, y: 0, width: 0, height: 0 },
+    };
+
+    layoutTree(root, 0, 0, 384, 80, (txt, s) => ({ width: txt.length * 8, height: s.fontSize * 1.4 }));
+    // (384 - 2*12) / 3 = 120px per column
+    expect(root.children[0]!.frame.width).toBeCloseTo(120, 1);
+    expect(root.children[1]!.frame.x).toBeCloseTo(132, 1);
+    expect(root.children[2]!.frame.x).toBeCloseTo(264, 1);
   });
 });

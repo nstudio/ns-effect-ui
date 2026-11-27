@@ -34,6 +34,27 @@ importers:
         specifier: ^4.0.8
         version: 4.1.12(@types/node@24.19.4)(happy-dom@21.0.4)(vite@8.4.0(@types/node@24.19.4)(esbuild@0.27.7)(jiti@2.7.0)(sass@1.108.2))
 
+  apps/macos:
+    dependencies:
+      '@effect/ui':
+        specifier: https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2
+        version: https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2(effect@4.1.6)
+      '@effect/ui-kit':
+        specifier: https://pkg.pr.new/Effect-TS/ui/@effect/ui-kit@5cb34b2
+        version: https://pkg.pr.new/Effect-TS/ui/@effect/ui-kit@5cb34b2(@effect/ui@https://pkg.pr.new/Effect-TS/ui/@effect/ui@5cb34b2(effect@4.1.6))(effect@4.1.6)
+      '@nativescript/macos-node-api':
+        specifier: 0.5.0-beta.0
+        version: 0.5.0-beta.0
+      '@ns-effect-ui/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared-app
+      '@nstudio/nativescript-effect-ui':
+        specifier: workspace:*
+        version: link:../../packages/effect-ui
+      effect:
+        specifier: ^4.1.6
+        version: 4.1.6
+
   apps/native:
     dependencies:
       '@effect/ui':
@@ -782,6 +803,12 @@ packages:
 
   '@nativescript/ios@9.1.1':
     resolution: {integrity: sha512-xgSo3sRJinexjcbcKUz7N+Wz6M53+mf8oQaTvekPWVeHG0E8WvS9S7cnkU7IYzTpyBwR5h6z9m7RfTYv9iAvOw==}
+
+  '@nativescript/macos-node-api@0.5.0-beta.0':
+    resolution: {integrity: sha512-feYWtaGO50IfEkqoqWhpsxs2ZvoBCWg5yRKoYjCgPXHWQ/W1Sjb7ack7opq7A4sxv5Z1h1Qfr/Q1UyYIUmg6Kg==}
+
+  '@nativescript/objc-node-api@1.0.0-alpha.7':
+    resolution: {integrity: sha512-HCkKX46wmc/Oe+Td958HeRmlqKCKmzeeIm0Kofb8aU+6WqjslLK8xGj6HLQT1SyzLWNQdr3dYp7PLFixMjBymw==}
 
   '@nativescript/tailwind@4.0.10':
     resolution: {integrity: sha512-slLtvAZ+8xZcunMBaTciFpy+aQ2oalDe38o7dbGSv+SGr8R39EnwlFLuX72QwqQneUH02w1MKCsioIzvriYS4g==}
@@ -2626,6 +2653,12 @@ snapshots:
   '@nativescript/hook@3.0.5': {}
 
   '@nativescript/ios@9.1.1': {}
+
+  '@nativescript/macos-node-api@0.5.0-beta.0':
+    dependencies:
+      '@nativescript/objc-node-api': 1.0.0-alpha.7
+
+  '@nativescript/objc-node-api@1.0.0-alpha.7': {}
 
   '@nativescript/tailwind@4.0.10(postcss@8.5.33)':
     dependencies:

@@ -2,7 +2,7 @@
 
 First-class **NativeScript 9.1** & **MasonKit** rendering hosts, native element vocabulary, and platform Effect `Layer`s for **[Effect UI](https://github.com/Effect-TS/ui)** (`@effect/ui`).
 
-Write **one** Effect UI application — with typed `Schema` models, pure `update` transitions, `Query.Service` data fetching, `Command.Service` side effects, `@effect/ui-kit` headless components, and shared Tailwind v4 styling — and run it across **Web (`BrowserHost`)** and **native iOS & Android (`MasonHost`)** with **no WebView, no browser DOM shim, and no third-party native bridge plugins**.
+Write **one** Effect UI application — with typed `Schema` models, pure `update` transitions, `Query.Service` data fetching, `Command.Service` side effects, `@effect/ui-kit` headless components, and shared Tailwind v4 styling — and run it across **Web (`BrowserHost`)**, **native iOS & Android (`MasonHost`)**, and **native macOS Desktop (`MacosHost`)** with **no WebView, no Electron, no browser DOM shim, and no third-party native bridge plugins**.
 
 ---
 
@@ -14,7 +14,9 @@ This repository brings Effect UI to native platforms through three layers in [`p
 
 1. **`MasonHost` (`@nstudio/nativescript-effect-ui/mason`) — HTML-Compatible Native Host (Strategy B)**
    Implements `@effect/ui`'s `Renderer.Host<Node>` and `Html.Host` over [`@triniwiz/nativescript-masonkit`](https://github.com/triniwiz/nativescript-mason) (Rust/Taffy CSS Grid & Flexbox backed by real native views). Unmodified `Html.component(...)` views and `@effect/ui-kit` headless components mount directly on native UIKit and Android Views.
-2. **`Native` Vocabulary & `NativeHost` (`@nstudio/nativescript-effect-ui/native`) — Dedicated NativeScript Host (Strategy A)**
+2. **`MacosHost` (`@nstudio/nativescript-effect-ui/macos`) — Native macOS AppKit Desktop Host**
+   Implements `@effect/ui`'s `Renderer.Host<MacosNode>` and `Html.Host` directly over **`@nativescript/macos-node-api`** (AppKit `NSWindow`, `NSScrollView`, `NSView`, `NSTextField`, `NSPanel` sheets, `NSHapticFeedbackManager`, `NSPasteboard`). Mounts the exact same `PulseApp` `Html.component(...)` on macOS desktop with **zero WebView, zero Electron, and zero Xcode build** (`pnpm macos`).
+3. **`Native` Vocabulary & `NativeHost` (`@nstudio/nativescript-effect-ui/native`) — Dedicated NativeScript Host (Strategy A)**
    Modeled on `@effect/ui-opentui`: a strongly-typed NativeScript core vocabulary (`Native.component(...)` with `stackLayout`, `gridLayout`, `flexboxLayout`, `scrollView`, `label`, `button`, `switch`, `slider`, `progress`, `textField`, etc.) plus `NativeCommand` ref commands (`focus`, `blur`, `measure`, `animate`).
 3. **Platform Effect Services (`@nstudio/nativescript-effect-ui/platform` & `@nstudio/nativescript-effect-ui/platform/native`)**
    Host-agnostic Effect `Context.Service` definitions (`Haptics`, `DeviceInfo`, `AppLifecycle`, `Clipboard`) with zero platform imports in shared code, backed by:
@@ -147,7 +149,7 @@ Because **both NativeScript and MasonKit target far more than iOS and Android** 
 | **Platform Reach** | **Web + iOS + Android + macOS + Windows + Linux + visionOS** (NativeScript & MasonKit ship mobile and desktop backends). | **iOS + Android only** (mobile React Native / Expo). |
 | **UI-Thread Motion** | **Native CoreAnimation (iOS) + RenderThread `ViewPropertyAnimator` (Android)** directly from pure TS (`@nstudio/nativescript-effect-ui/motion`) — zero Reanimated/worklets. | **`Motion.animate`** via `react-native-worklets` + `react-native-reanimated` (requires native rebuild / dev build). |
 | **Bottom Sheets, Lists, Keyboard, Crash & DevTools** | **All shipped in pure TS with zero native plugins:** `@nstudio/nativescript-effect-ui/sheet` (`UISheetPresentationController` + Liquid Glass), `/list` (1,000-row recycled `VirtualList`), `/keyboard` (IME `Subscription` + docked composer), `/crash` (interactive recovery fallback), `/devtools` (`MessageLog` Wire WebSocket bridge). | Strong mobile prototypes (`VirtualList`, `AnchoredList`, `KeyboardBar`, `react-native-screens` stacks/sheets, `NativeCrash`, `NativeDevTools`), backed by Expo/RN native packages. |
-| **Live Verification Today** | Verified running live on **Web**, **iOS 27 Simulator**, and **Android 16 Emulator** (including seamless Android edge-to-edge + interactive Native Lab), plus 13 Vitest specs. | Extensive simulated-phone suite (284 `NativeTest` tests); README notes `eui-playground` has not yet been run on a phone or on Android. |
+| **Live Verification Today** | Verified running live on **Web**, **iOS 27 Simulator**, **Android 16 Emulator**, and **native macOS 26 AppKit desktop** (`pnpm macos`, light & dark), plus 14 Vitest specs. | Extensive simulated-phone suite (284 `NativeTest` tests); README notes `eui-playground` has not yet been run on a phone or on Android. |
 
 ### Where `foldkit-native` Excels Today (Fair Credit)
 
@@ -176,6 +178,7 @@ ns-effect-ui/
 │   ├── effect-ui/                # @nstudio/nativescript-effect-ui
 │   │   └── src/
 │   │       ├── mason/            # Strategy B: MasonHost, elements, styles, events, native <dialog>/sheet, services, tests
+│   │       ├── macos/            # Native macOS AppKit host (MacosHost, MacosPlatformLayer, layout, monochrome styles)
 │   │       ├── native/           # Strategy A: Native.component vocabulary, NativeHost, NativeCommand
 │   │       ├── platform/         # Effect Services (Haptics, DeviceInfo, AppLifecycle, Clipboard) + Web/Native/Test Layers
 │   │       ├── motion/           # UI-thread CoreAnimation (iOS) & RenderThread ViewPropertyAnimator (Android)
@@ -188,7 +191,8 @@ ns-effect-ui/
 │   └── shared-app/               # @ns-effect-ui/shared ("Effect Pulse" — 100% shared app + CSS + Play tests)
 └── apps/
     ├── web/                      # Vite 8 + Tailwind v4 web app (BrowserHost.mount)
-    └── native/                   # NativeScript 9.1 + @nativescript/vite + MasonKit app (MasonHost + NativeHost tabs)
+    ├── native/                   # NativeScript 9.1 + @nativescript/vite + MasonKit app (MasonHost + NativeHost tabs)
+    └── macos/                    # Native macOS AppKit desktop app (@nativescript/macos-node-api + MacosHost.run)
 ```
 
 ---
@@ -215,6 +219,11 @@ pnpm ios
 
 # Run the NativeScript Android app (MasonHost + NativeHost)
 pnpm android
+
+# Run the native macOS AppKit desktop app (MacosHost, zero Xcode build)
+pnpm macos
+# Or launch in macOS Dark Mode:
+pnpm macos -- --dark
 ```
 
 ---

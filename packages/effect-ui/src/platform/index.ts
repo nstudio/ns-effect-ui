@@ -83,8 +83,8 @@ export class Haptics extends Context.Service<
 // ---------------------------------------------------------------------------
 
 export interface DeviceInfoData {
-  readonly platform: 'ios' | 'android' | 'web' | 'test';
-  readonly host: 'mason' | 'native' | 'browser' | 'test';
+  readonly platform: 'ios' | 'android' | 'macos' | 'windows' | 'linux' | 'web' | 'test';
+  readonly host: 'mason' | 'native' | 'macos' | 'browser' | 'test';
   readonly osVersion: string;
   readonly model: string;
   readonly isNative: boolean;
